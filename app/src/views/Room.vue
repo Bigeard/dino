@@ -12,7 +12,7 @@
         />
         <gb-button
           :disabled="!user.pass_id"
-          @click="$router.push('/room')"
+          @click="$router.push('/game')"
           right-icon="add"
         >
           New Game
@@ -55,7 +55,7 @@
 
 <script>
 export default {
-  name: "Home",
+  name: "Room",
   async beforeMount() {
     let user = await this.$db.user.get({ id: 0 });
     if (user === undefined) {
@@ -85,49 +85,6 @@ export default {
         pass_id: null
       }
     };
-  },
-  watch: {
-    code_game(v) {
-      if (v.length > 8) {
-        this.$router.push("/game");
-      }
-    },
-    username(v) {
-      this.onChangeUsername(v);
-    }
-  },
-  methods: {
-    onChangeUsername(v) {
-      if (v.length === 0) {
-        this.info = "Please add a username to start playing";
-        this.status = "warning";
-        this.error = null;
-      } else if (v.length < 3) {
-        this.error = "A minimum of 3 characters is required";
-        this.status = "error";
-        this.info = null;
-      } else if (!/^[\w.]*$/.test(v)) {
-        this.error =
-          'you can only use the following characters: "A-z" "0-9" "_"';
-        this.status = "error";
-        this.info = null;
-      } else {
-        this.info = null;
-        this.error = null;
-        this.status = "normal";
-      }
-    },
-    async checkUsername() {
-      if (this.status === "normal") {
-        const user = {
-          id: 0,
-          username: this.username,
-          pass_id: "EUYahAs3u77YP9Bb"
-        };
-        await this.$db.user.update(0, user);
-        this.user = user;
-      }
-    }
   }
 };
 </script>
