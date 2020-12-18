@@ -27,7 +27,7 @@
         />
         <gb-button
           :disabled="!user.pass_id"
-          @click="$router.push('/game')"
+          @click="$router.push('/room')"
           right-icon="add"
         >
           New Game
