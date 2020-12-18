@@ -1,5 +1,8 @@
 {
     "name": "Dino",
     "short_name": "Dino",
-    "description": "Dino Game Project"
+    "description": "Dino Game Project !",
+    "start_url": "/",
+    "theme_color": "#0093ee",
+    "background_color": "#1b2431"
 }
