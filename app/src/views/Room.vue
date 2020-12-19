@@ -4,47 +4,51 @@
       <gb-heading tag="h1" class="logo">Dino 🦖</gb-heading>
       <!-- Navigation -->
       <div class="nav">
-        <gb-input
-          label="Search Game !"
-          placeholder="Enter the code..."
-          v-model="code_game"
-          :disabled="!user.pass_id"
-        />
-        <gb-button
-          :disabled="!user.pass_id"
-          @click="$router.push('/game')"
-          right-icon="add"
-        >
-          New Game
-        </gb-button>
-        <gb-button
-          :disabled="!user.pass_id"
-          @click="$router.push('/game')"
-          right-icon="search"
-        >
-          My Games
-        </gb-button>
-        <gb-button @click="$router.push('/about')" right-icon="info">
-          About
-        </gb-button>
-      </div>
-      <gb-divider />
-      <!-- User Info -->
-      <div class="user">
-        <div class="username">
+        <div class="game">
           <gb-input
+            class="game_name"
             v-model="username"
-            label="Username"
-            placeholder="Username is required"
+            label="Name of this game"
+            placeholder="name is required"
             :info="info"
             :error="error"
             :status="status"
           />
-          <gb-button @click="checkUsername" :class="status + '_valid'"
-            >✔️</gb-button
-          >
+          <gb-button @click="checkUsername" :class="status + '_valid'">
+            ✔️
+          </gb-button>
         </div>
-        <p v-if="user.pass_id">
+        <gb-badge>Players : 5/5</gb-badge>
+        <div class="player_list">
+          <ul class="players">
+            <li><img src="../../public/img/icons/zorfiL.gif" />Bigeard</li>
+            <li><img src="../../public/img/icons/zorfiL.gif" />Coco</li>
+            <li><img src="../../public/img/icons/zorfiL.gif" />Clément</li>
+            <li><img src="../../public/img/icons/zorfiL.gif" />Axel</li>
+            <li><img src="../../public/img/icons/zorfiL.gif" />Corentin</li>
+          </ul>
+        </div>
+        <div class="choice_button">
+          <gb-button
+            :disabled="!user.pass_id"
+            @click="$router.push('/')"
+            right-icon="home"
+          >
+            Home
+          </gb-button>
+          <gb-button
+            :disabled="!user.pass_id"
+            @click="$router.push('/game')"
+            right-icon="gps_fixed"
+          >
+            Strart Game
+          </gb-button>
+        </div>
+      </div>
+      <gb-divider />
+      <!-- User Info -->
+      <div class="user">
+        <p class="game_id" v-if="user.pass_id">
           Pass ID :
           <span class="pass_id">{{ user.pass_id }}</span>
         </p>
@@ -85,6 +89,49 @@ export default {
         pass_id: null
       }
     };
+  },
+  watch: {
+    code_game(v) {
+      if (v.length > 8) {
+        this.$router.push("/game");
+      }
+    },
+    username(v) {
+      this.onChangeUsername(v);
+    }
+  },
+  methods: {
+    onChangeUsername(v) {
+      if (v.length === 0) {
+        this.info = "Please add a username to start playing";
+        this.status = "warning";
+        this.error = null;
+      } else if (v.length < 3) {
+        this.error = "A minimum of 3 characters is required";
+        this.status = "error";
+        this.info = null;
+      } else if (!/^[\w.]*$/.test(v)) {
+        this.error =
+          'you can only use the following characters: "A-z" "0-9" "_"';
+        this.status = "error";
+        this.info = null;
+      } else {
+        this.info = null;
+        this.error = null;
+        this.status = "normal";
+      }
+    },
+    async checkUsername() {
+      if (this.status === "normal") {
+        const user = {
+          id: 0,
+          username: this.username,
+          pass_id: "EUYahAs3u77YP9Bb"
+        };
+        await this.$db.user.update(0, user);
+        this.user = user;
+      }
+    }
   }
 };
 </script>
@@ -102,12 +149,19 @@ export default {
   }
 
   .content {
+    width: 20%;
     border: 1px solid #3f536e;
     border-radius: 8px;
     background-color: #171e29;
     padding: 30px;
     margin-top: 30px;
     margin: 6px 6px 30px 6px;
+    @media screen and (max-width: 1300px) {
+      width: 30%;
+    }
+    @media screen and (max-width: 992px) {
+      width: 50%;
+    }
   }
 
   .logo {
@@ -116,16 +170,45 @@ export default {
     margin-bottom: 40px !important;
   }
 
-  .username {
+  .player_list {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    text-align: none;
+    .players {
+      list-style: none;
+      text-align: left;
+      padding-left: 20px;
+      li {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+  }
+
+  .game {
     display: flex;
     align-items: flex-end;
     margin-bottom: 30px;
-    .gb-field-input {
-      width: 100%;
+    width: 100%;
+    .game_name {
+      width: 80% !important;
       margin-right: 10px;
     }
     .gb-base-button {
+      width: 20% !important;
       height: 42px;
+    }
+  }
+
+  .choice_button {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    button {
+      width: 45% !important;
+      height: 45px;
     }
   }
 
@@ -143,6 +226,13 @@ export default {
       width: 100%;
       margin-top: 20px;
     }
+  }
+
+  .game_id {
+    display: flex;
+    flex-direction: column;
+    height: 65px;
+    justify-content: space-between;
   }
 }
 </style>
