@@ -1,7 +1,9 @@
 <template>
   <div class="home">
     <div class="content">
-      <gb-heading tag="h1" class="logo">Dino 🦖</gb-heading>
+      <gb-heading tag="h1" class="logo"
+        >Dino <img src="../assets/game/zorfiL.gif" alt="Dino"
+      /></gb-heading>
       <!-- Navigation -->
       <div class="nav">
         <gb-input
@@ -157,6 +159,11 @@ export default {
     font-size: 65px !important;
     line-height: normal !important;
     margin-bottom: 40px !important;
+
+    img {
+      width: 74px;
+      margin-bottom: -12px;
+    }
   }
 
   .username {
