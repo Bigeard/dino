@@ -10,6 +10,7 @@ export default class Game {
   width = 20;
   height = 20;
   players = ["Robin", "Coco", "Axel", "Clement", "Bigeard"];
+  closeDialogWin = false;
 
   constructor() {
     console.log("Start Game !");
@@ -28,7 +29,7 @@ export default class Game {
    * @param {Number} x Position of cell X
    * @param {Number} y Position of cell Y
    */
-  actionGame(x, y) {
+  actionGame(x, y, e) {
     this.select = this.map[y][x];
     console.log(`x: ${x} / y: ${y} - ${this.select.name}: `, this.select);
 
@@ -42,9 +43,23 @@ export default class Game {
         });
 
         // Inflicts damage
+        const totalDamage = this.actionPlayer.obj.stat.damage + itemsDamage;
+
         this.map[y][x].obj.stat.health =
-          this.map[y][x].obj.stat.health -
-          (this.actionPlayer.obj.stat.damage + itemsDamage);
+          this.map[y][x].obj.stat.health - totalDamage;
+
+        // Annimation of total damage
+        e.target.innerHTML = "-" + totalDamage;
+        e.target.style.backgroundImage = "none";
+        e.target.style.fontWeight = "bold";
+        e.target.style.padding = "0";
+
+        setTimeout(() => {
+          e.target.style.backgroundImage = null;
+          e.target.style.padding = null;
+          e.target.style.fontWeight = null;
+          e.target.innerHTML = "";
+        }, 1000);
 
         // Detect if the player has no more health
         if (this.map[y][x].obj.stat.health <= 0) {
@@ -63,7 +78,6 @@ export default class Game {
 
           // If he is the last player, he has won!
           if (this.players.length === 1) {
-            console.log(this.actionPlayer);
             console.log(this.actionPlayer.name + " WIN !!!");
           }
         }
@@ -96,7 +110,9 @@ export default class Game {
         this.map[y][x].obj.stat.move
       );
       accessible.forEach(e => {
-        this.map[e.y][e.x].view_distance = "Distance";
+        if (!e.obj || e.obj.name != this.map[y][x].obj.name) {
+          this.map[e.y][e.x].view_distance = "Distance";
+        }
       });
       this.actionPlayer = this.map[y][x];
     } else if (this.map[y][x].name === "Ground") {

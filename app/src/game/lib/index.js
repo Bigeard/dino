@@ -41,7 +41,7 @@ const generateMap = (width, height, players, numObstacle, numItems, items) => {
       name: players[p],
       img: "/public/img/icons/zorfiL.gif",
       stat: {
-        health: 4,
+        health: 40,
         damage: 4,
         move: 3
       }
