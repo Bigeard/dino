@@ -56,7 +56,9 @@
         <div class="info-obj">
           <div class="stat">
             <span>Stat</span>
-            <span>- Health : {{ select.obj.stat.health }}</span>
+            <span v-if="select.obj.stat.health"
+              >- Health : {{ select.obj.stat.health }}</span
+            >
             <span>- Damage : {{ select.obj.stat.damage }}</span>
             <span>- Move : {{ select.obj.stat.move }}</span>
           </div>
@@ -70,7 +72,11 @@
         </div>
       </div>
 
-      <div class="win" v-if="players.length === 1" @click="closeInfo">
+      <div
+        class="win"
+        v-if="players.length === 1 && !closeDialogWin"
+        @click="closeWin"
+      >
         <gb-heading tag="h1"
           >{{ actionPlayer.obj.name }} won the game !</gb-heading
         >
@@ -90,11 +96,15 @@ export default {
   methods: {
     closeInfo() {
       this.select = null;
+      setTimeout;
+    },
+    closeWin() {
+      this.closeDialogWin = true;
     },
     action(e) {
       const x = Number(e.target.attributes.x.value);
       const y = Number(e.target.attributes.y.value);
-      this._data.actionGame(x, y);
+      this._data.actionGame(x, y, e);
     }
   }
 };
@@ -116,7 +126,7 @@ table {
   justify-content: space-between;
   align-items: center;
   background: #1b2431db;
-  max-width: 840px;
+  max-width: 836px;
   .icon {
     i {
       margin: 0 !important;
@@ -139,7 +149,7 @@ table {
   left: 0;
   right: 0;
   width: 300px;
-  height: 70px;
+  height: 146px;
   background: linear-gradient(-45deg, #31ca12, #8db79c, #0cb988);
   background-size: 400% 400%;
   animation: Gradient 8s ease infinite;
@@ -242,6 +252,8 @@ table {
 
 .Distance {
   background-color: #85c5b5;
+  border: 2px dashed #ffffff7a;
+  padding: 0;
 }
 
 .Item {
