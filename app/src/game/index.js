@@ -36,15 +36,7 @@ export default class Game {
     // if the cell is currently in movement / distance selection
     if (this.map[y][x].view_distance === "Distance") {
       if (this.map[y][x].name === "Player") {
-        // Calculate doamge with items
-        let itemsDamage = 0;
-        this.actionPlayer.items.forEach(i => {
-          itemsDamage += i.stat.damage;
-        });
-
-        // Inflicts damage
-        const totalDamage = this.actionPlayer.obj.stat.damage + itemsDamage;
-
+        const totalDamage = this.calcTotalDamage(this.actionPlayer);
         this.map[y][x].obj.stat.health =
           this.map[y][x].obj.stat.health - totalDamage;
 
@@ -120,6 +112,16 @@ export default class Game {
       this.resetDistance();
       this.actionPlayer = null;
     }
+  }
+
+  calcTotalDamage(player) {
+    // Calculate damage with items
+    let itemsDamage = 0;
+    player.items.forEach(i => {
+      itemsDamage += i.stat.damage;
+    });
+    // Inflicts damage
+    return player.obj.stat.damage + itemsDamage;
   }
 
   /**

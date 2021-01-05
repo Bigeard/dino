@@ -52,14 +52,17 @@
         v-if="select && select.obj"
         @click="closeInfo"
       >
-        <b>{{ select.name }} : {{ select.obj.name }}</b>
+        <gb-heading tag="h2"
+          >{{ select.name }} : {{ select.obj.name }}</gb-heading
+        >
+
         <div class="info-obj">
           <div class="stat">
-            <span>Stat</span>
+            <b>Stat</b>
             <span v-if="select.obj.stat.health"
               >- Health : {{ select.obj.stat.health }}</span
             >
-            <span>- Damage : {{ select.obj.stat.damage }}</span>
+            <span>- Damage : {{ _data.calcTotalDamage(select) }}</span>
             <span>- Move : {{ select.obj.stat.move }}</span>
           </div>
           <div
@@ -70,8 +73,21 @@
             <span>{{ select.obj.icon }}</span>
           </div>
         </div>
+        <b v-if="select.items.length" class="info-items">Items</b>
+        <div class="info-obj" v-for="(item, i) in select.items" :key="i">
+          <div class="stat">
+            <b>{{ item.name }}</b>
+            <span v-if="item.stat.health"
+              >- Health : {{ item.stat.health }}</span
+            >
+            <span>- Damage : {{ item.stat.damage }}</span>
+            <span>- Move : {{ item.stat.move }}</span>
+          </div>
+          <div class="view">
+            <span>{{ item.icon }}</span>
+          </div>
+        </div>
       </div>
-
       <div
         class="win"
         v-if="players.length === 1 && !closeDialogWin"
@@ -167,6 +183,7 @@ table {
 }
 
 .info {
+  border: 2px dashed #ffffff7a;
   cursor: pointer;
   position: fixed;
   margin: 20px auto;
@@ -183,13 +200,17 @@ table {
   padding: 16px;
   border-radius: 6px;
 
-  b {
+  h2 {
+    margin: 0 auto;
+  }
+
+  .info-items {
     width: 100%;
-    margin-bottom: 15px;
-    text-align: center;
+    margin-top: 13px;
   }
 
   .info-obj {
+    margin-top: 10px;
     width: 100%;
     display: flex;
 
@@ -198,15 +219,18 @@ table {
       display: flex;
       flex-direction: column;
       text-align: left;
+      margin-left: 6px;
     }
 
     .view {
-      font-size: 50px;
+      font-size: 32px;
+      margin: 10px 14px;
     }
 
     .view-player {
       width: 90px;
       height: 70px;
+      margin: 0;
     }
   }
 }
