@@ -11,10 +11,11 @@ export default class Game {
   height = 20;
   players = ["Robin", "Coco", "Axel", "Clement", "Bigeard"];
   closeDialogWin = false;
+  closeDialogInfo = false;
 
   constructor() {
     console.log("Start Game !");
-    this.map = generateMap(
+    const { new_map, gen_player } = generateMap(
       this.width, // width
       this.height, // height
       this.players, // players
@@ -22,6 +23,8 @@ export default class Game {
       6, // numItems
       this.items // items
     );
+    this.map = new_map;
+    this.players = gen_player;
   }
 
   /**
@@ -36,7 +39,7 @@ export default class Game {
     // if the cell is currently in movement / distance selection
     if (this.map[y][x].view_distance === "Distance") {
       if (this.map[y][x].name === "Player") {
-        const totalDamage = this.calcTotalDamage(this.actionPlayer);
+        const totalDamage = this.calcTotalDamage(this.actionPlayer.obj);
         this.map[y][x].obj.stat.health =
           this.map[y][x].obj.stat.health - totalDamage;
 
@@ -55,9 +58,12 @@ export default class Game {
 
         // Detect if the player has no more health
         if (this.map[y][x].obj.stat.health <= 0) {
-          const index = this.players.indexOf(this.map[y][x].obj.name);
+          const index = this.players
+            .map(e => e.name)
+            .indexOf(this.map[y][x].obj.name);
+          console.log(index);
           if (index > -1) {
-            this.players.splice(index, 1);
+            this.players[index].dead = true;
           }
           this.map[y][x] = {
             name: "Ground",
@@ -79,7 +85,6 @@ export default class Game {
           name: "Ground",
           x: this.actionPlayer.x,
           y: this.actionPlayer.y,
-          items: [],
           obstacle: false,
           view_distance: null
         };
@@ -87,7 +92,7 @@ export default class Game {
         this.actionPlayer.y = y;
 
         if (this.map[y][x].name === "Item") {
-          this.actionPlayer.items.push(this.map[y][x].obj);
+          this.actionPlayer.obj.items.push(this.map[y][x].obj);
         }
         this.map[y][x] = this.actionPlayer;
       }
@@ -114,14 +119,15 @@ export default class Game {
     }
   }
 
-  calcTotalDamage(player) {
+  calcTotalDamage(obj) {
     // Calculate damage with items
     let itemsDamage = 0;
-    player.items.forEach(i => {
+    if (!obj.items) return obj.stat.damage;
+    obj.items.forEach(i => {
       itemsDamage += i.stat.damage;
     });
     // Inflicts damage
-    return player.obj.stat.damage + itemsDamage;
+    return obj.stat.damage + itemsDamage;
   }
 
   /**

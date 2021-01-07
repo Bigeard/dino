@@ -23,7 +23,6 @@ const generateMap = (width, height, players, numObstacle, numItems, items) => {
         name: "Ground",
         x: x,
         y: y,
-        items: [],
         obstacle: false,
         view_distance: null
       });
@@ -32,21 +31,28 @@ const generateMap = (width, height, players, numObstacle, numItems, items) => {
 
   // Generate the Players
   let randCell = null;
+  let data_players = [];
   for (let p = 0; p < players.length; p++) {
     randCell = map[randInt(0, height)][randInt(0, width)];
     randCell.id = p;
     randCell.name = "Player";
     randCell.obstacle = false;
     randCell.obj = {
+      id: "XXXX",
       name: players[p],
       img: "/public/img/icons/zorfiL.gif",
+      dead: false,
+      items: [],
+      numPlayer: p,
       stat: {
         health: 40,
         damage: 4,
         move: 3
       }
     };
+    data_players.push(randCell.obj);
   }
+  players = data_players;
 
   // Generate the Obstacles
   for (let o = 0; o < numObstacle; o++) {
@@ -67,7 +73,7 @@ const generateMap = (width, height, players, numObstacle, numItems, items) => {
     }
   }
 
-  return map;
+  return { new_map: map, gen_player: players };
 };
 
 export { randInt, generateMap };
