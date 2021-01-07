@@ -21,7 +21,7 @@
             "statusCode": 200
         },
         {
-            "route": "/allgame",
+            "route": "/allgames",
             "serve": "/index.html",
             "statusCode": 200
         },

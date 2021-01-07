@@ -34,7 +34,7 @@
         </gb-button>
         <gb-button
           :disabled="!user.pass_id"
-          @click="$router.push('/allgame')"
+          @click="$router.push('/allgames')"
           right-icon="search"
         >
           My Games
