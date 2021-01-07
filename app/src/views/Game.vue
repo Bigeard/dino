@@ -170,7 +170,7 @@ export default {
 
 #game,
 table {
-  margin: 55px auto 0 auto;
+  margin: 55px auto 80px auto;
 }
 
 .option {
@@ -358,6 +358,12 @@ table {
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+@media (max-width: 875px) {
+  .game {
+    overflow: scroll;
   }
 }
 </style>
