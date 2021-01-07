@@ -12,14 +12,10 @@
       <div>
         <gb-button
           class="icon icon-info"
-          @click="$router.push('/')"
+          @click="infoGame()"
           right-icon="info"
         />
-        <gb-button
-          class="icon"
-          @click="$router.push('/')"
-          right-icon="refresh"
-        />
+        <gb-button class="icon" @click="reloadGame()" right-icon="refresh" />
       </div>
     </div>
     <div id="game">
@@ -62,7 +58,7 @@
             <span v-if="select.obj.stat.health"
               >- Health : {{ select.obj.stat.health }}</span
             >
-            <span>- Damage : {{ _data.calcTotalDamage(select) }}</span>
+            <span>- Damage : {{ _data.calcTotalDamage(select.obj) }}</span>
             <span>- Move : {{ select.obj.stat.move }}</span>
           </div>
           <div
@@ -73,8 +69,10 @@
             <span>{{ select.obj.icon }}</span>
           </div>
         </div>
-        <b v-if="select.items.length" class="info-items">Items</b>
-        <div class="info-obj" v-for="(item, i) in select.items" :key="i">
+        <b v-if="select.obj.items && select.obj.items.length" class="info-items"
+          >Items</b
+        >
+        <div class="info-obj" v-for="(item, i) in select.obj.items" :key="i">
           <div class="stat">
             <b>{{ item.name }}</b>
             <span v-if="item.stat.health"
@@ -99,6 +97,29 @@
         <gb-heading tag="h1">🎉 🎉 🎉</gb-heading>
       </div>
     </div>
+    <div class="info" v-if="closeDialogInfo" @click="infoGame">
+      <gb-heading tag="h2">Game Info</gb-heading>
+      <span>Players' turn :</span>
+      <div
+        :class="
+          `info-obj info-player Player${p.numPlayer + 1} ${
+            !i ? 'dot-background' : ''
+          }`
+        "
+        v-for="(p, i) in players"
+        :key="i"
+      >
+        <div class="stat">
+          <b>{{ p.name }}</b>
+          <span v-if="p.stat.health">- Health : {{ p.stat.health }}</span>
+          <span>- Damage : {{ _data.calcTotalDamage(p) }}</span>
+          <span>- Move : {{ p.stat.move }}</span>
+        </div>
+        <div :class="`view Player view-player`">
+          <span>{{ p.icon }}</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -110,6 +131,13 @@ export default {
     return new Game();
   },
   methods: {
+    infoGame() {
+      console.log(this.players);
+      this.closeDialogInfo = this.closeDialogInfo ? false : true;
+    },
+    reloadGame() {
+      window.location.reload(true);
+    },
     closeInfo() {
       this.select = null;
       setTimeout;
@@ -126,12 +154,27 @@ export default {
 };
 </script>
 <style lang="scss">
+.game {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#game {
+  position: relative;
+  top: 0;
+  left: 0;
+}
+
 #game,
 table {
-  margin: 55px auto 0 auto;
+  margin: 55px auto 80px auto;
 }
 
 .option {
+  z-index: 100;
   position: fixed;
   padding: 7px 5px 5px 5px;
   margin: auto;
@@ -183,7 +226,6 @@ table {
 }
 
 .info {
-  border: 2px dashed #ffffff7a;
   cursor: pointer;
   position: fixed;
   margin: 20px auto;
@@ -191,7 +233,7 @@ table {
   left: 0;
   right: 0;
   width: 260px;
-  background: #0093ee;
+  background: #171e29;
   box-shadow: 0 1px 5px 0 #171e29;
   display: flex;
   align-items: flex-start;
@@ -199,6 +241,7 @@ table {
   flex-direction: column;
   padding: 16px;
   border-radius: 6px;
+  border: 2px dashed #ffffff7a;
 
   h2 {
     margin: 0 auto;
@@ -207,6 +250,26 @@ table {
   .info-items {
     width: 100%;
     margin-top: 13px;
+  }
+
+  .info-player {
+    padding: 8px;
+    border-radius: 6px;
+    margin: auto -8px;
+  }
+
+  .dot-background {
+    background-size: 10px 10px;
+    background-image: radial-gradient(
+        circle at 50% 50%,
+        #000,
+        #000 1px,
+        transparent 1px
+      ),
+      radial-gradient(circle at 0 0, #000, #000 1px, transparent 1px),
+      radial-gradient(circle at 0 100%, #000, #000 1px, transparent 1px),
+      radial-gradient(circle at 100% 0, #000, #000 1px, transparent 1px),
+      radial-gradient(circle at 100% 100%, #000, #000 1px, transparent 1px);
   }
 
   .info-obj {
@@ -295,6 +358,12 @@ table {
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+@media (max-width: 875px) {
+  .game {
+    overflow: scroll;
   }
 }
 </style>
