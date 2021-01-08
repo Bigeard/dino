@@ -7,12 +7,12 @@
         },
         {
             "route": "/about",
-            "serve": "About",
+            "serve": "/index.html",
             "statusCode": 200
         },
         {
             "route": "/game",
-            "serve": "Game",
+            "serve": "/index.html",
             "statusCode": 200
         }
     ]
