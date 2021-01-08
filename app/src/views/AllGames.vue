@@ -12,23 +12,19 @@
                     <!-- <p>Round : {{ round }}</p> -->
                     <p>Code : {{ game.code }}</p>
                     <p>Created by : {{ game.created_at }}</p>
-                    <p>Date : {{ game.update_at }}</p>
+                    <p>Update at : {{ game.update_at }}</p>
                 </div>
             </div>
         </div>
     </div>
 </template>
-
 <script>
-
-const games = [
-   { id: 1, code: 12345, created_at: '01/01/2021', updated_at: '08/01/2021', status: true },
-   { id: 2, code: 123, created_at: '02/01/2021', updated_at: '07/01/2021', status: false },
-   { id: 3, code: 1235, created_at: '04/01/2021', updated_at: '05/01/2021', status: false }
-]
-
+import Games from "../allGames/index.js";
 export default {
-  name: "AllGames"
+  name: "AllGames",
+  data() {
+    return new Games();
+  },
 };
 </script>
 <style lang="scss">
