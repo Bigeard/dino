@@ -61,10 +61,11 @@ export default class Game {
           const index = this.players
             .map(e => e.name)
             .indexOf(this.map[y][x].obj.name);
-          console.log(index);
+
           if (index > -1) {
             this.players[index].dead = true;
           }
+
           this.map[y][x] = {
             name: "Ground",
             x: x,
