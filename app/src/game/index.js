@@ -76,7 +76,10 @@ export default class Game {
           };
 
           // If he is the last player, he has won!
-          if (this.players.length === 1) {
+          if (
+            this.players.map(e => e.dead).filter(e => e === false).length === 1
+          ) {
+            this.closeDialogWin = true;
             console.log(this.actionPlayer.name + " WIN !!!");
           }
         }

@@ -86,11 +86,7 @@
           </div>
         </div>
       </div>
-      <div
-        class="win"
-        v-if="players.length === 1 && !closeDialogWin"
-        @click="closeWin"
-      >
+      <div class="win" v-if="actionPlayer && closeDialogWin" @click="closeWin">
         <gb-heading tag="h1"
           >{{ actionPlayer.obj.name }} won the game !</gb-heading
         >
@@ -142,7 +138,7 @@ export default {
       setTimeout;
     },
     closeWin() {
-      this.closeDialogWin = true;
+      this.closeDialogWin = false;
     },
     action(e) {
       const x = Number(e.target.attributes.x.value);
