@@ -59,10 +59,10 @@
 export default {
   name: "Home",
   async beforeMount() {
-    let user = await this.$db.user.get({ id: 0 });
+    let user = await this.$db.user.get({ _id: 0 });
     if (user === undefined) {
       user = {
-        id: 0,
+        _id: 0,
         username: "",
         pass_id: null,
         updated_at: new Date()
@@ -122,7 +122,7 @@ export default {
     async checkUsername() {
       if (this.status === "normal") {
         const user = {
-          id: 0,
+          _id: 0,
           username: this.username,
           pass_id: "EUYahAs3u77YP9Bb"
         };

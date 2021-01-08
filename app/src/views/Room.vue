@@ -1,7 +1,13 @@
 <template>
-  <div class="home">
+  <div class="room">
     <div class="content">
-      <gb-heading tag="h1" class="logo">Dino 🦖</gb-heading>
+      <div class="user">
+        <p class="game_code" v-if="game.code">
+          Game Code :
+          <span class="pass_code">{{ game.code }}</span>
+        </p>
+      </div>
+      <gb-divider class="divider-custom" />
       <!-- Navigation -->
       <div class="nav">
         <div class="game">
@@ -21,19 +27,35 @@
         <gb-badge>Players : 5/5</gb-badge>
         <div class="player_list">
           <ul class="players">
-            <li><img src="../../public/img/icons/zorfiL.gif" />Bigeard</li>
-            <li><img src="../../public/img/icons/zorfiL.gif" />Coco</li>
-            <li><img src="../../public/img/icons/zorfiL.gif" />Clément</li>
-            <li><img src="../../public/img/icons/zorfiL.gif" />Axel</li>
-            <li><img src="../../public/img/icons/zorfiL.gif" />Corentin</li>
+            <li v-for="(player, i) in players" :key="i">
+              <img src="../../public/img/icons/zorfiL.gif" />{{ player }}
+            </li>
           </ul>
+        </div>
+        <div class="mini-map">
+          <table>
+            <tr v-for="(row, y) in game.map" :key="y">
+              <td
+                v-for="(cell, x) in row"
+                :key="x"
+                :class="
+                  `cell 
+              ${cell.id + 1 ? cell.name + (cell.id + 1) : cell.name}
+              ${cell.obj ? 'obj' : ''}
+              ${cell.view_distance ? ' ' + cell.view_distance : ''}
+              ${cell.name === 'Player' ? 'Player' : ''}
+              `
+                "
+              ></td>
+            </tr>
+          </table>
         </div>
         <div class="choice_button">
           <gb-button @click="$router.push('/')" right-icon="home">
             Home
           </gb-button>
           <gb-button
-            :disabled="!game.game_id"
+            :disabled="status !== 'normal' || game.name === ''"
             @click="$router.push('/game')"
             right-icon="gps_fixed"
           >
@@ -41,58 +63,45 @@
           </gb-button>
         </div>
       </div>
-      <gb-divider />
-      <!-- User Info -->
-      <div class="user">
-        <p class="game_id" v-if="game.game_id">
-          Game ID :
-          <span class="pass_id">{{ game.game_id }}</span>
-        </p>
-      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { generateMap } from "../game/lib/index";
+import { items } from "../game/data/items";
+
 export default {
   name: "Room",
-  async beforeMount() {
-    let game = await this.$db.game.get({ id: 0 });
-    if (game === undefined) {
-      game = {
-        id: 0,
-        gamename: "",
-        game_id: null,
-        updated_at: new Date()
-      };
-      await this.$db.game.add(game);
-    }
-    this.onChangeGame(game.game);
-    if (this.status === "normal") {
-      this.gamename = game.gamename;
-      this.game = game;
-    }
-  },
   data() {
     return {
-      code_game: null,
-      gamename: null,
+      game: { name: "", code: "666" },
+      gamename: "",
+      width: 20,
+      height: 20,
+      players: ["toto_1", "toto_2", "toto_3", "toto_4", "toto_5"],
+      numObstacle: 40,
+      numItems: 6,
       info: null,
-      error: null,
       status: "normal",
-      game: {
-        gamename: null,
-        game_id: null
-      }
+      error: null
     };
   },
+  beforeMount() {
+    const { new_map, gen_player } = generateMap(
+      this.width,
+      this.width,
+      this.players,
+      this.numObstacle,
+      this.numItems,
+      items
+    );
+    this.game.map = new_map;
+    this.game.players = gen_player;
+    this.onChangeGamename(this.gamename);
+  },
   watch: {
-    code_game(v) {
-      if (v.length > 8) {
-        this.$router.push("/game");
-      }
-    },
-    game(v) {
+    gamename(v) {
       this.onChangeGamename(v);
     }
   },
@@ -119,13 +128,7 @@ export default {
     },
     async checkGamename() {
       if (this.status === "normal") {
-        const game = {
-          id: 0,
-          gamename: this.gamename,
-          game_id: "EUYahAs3u77YP9Bb"
-        };
-        await this.$db.game.update(0, game);
-        this.game = game;
+        this.game.name = this.gamename;
       }
     }
   }
@@ -133,11 +136,12 @@ export default {
 </script>
 
 <style lang="scss">
-.home {
+.room {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
+  overflow-y: scroll;
 
   .error_valid,
   .warning_valid {
@@ -145,19 +149,12 @@ export default {
   }
 
   .content {
-    width: 20%;
     border: 1px solid #3f536e;
     border-radius: 8px;
     background-color: #171e29;
     padding: 30px;
     margin-top: 30px;
     margin: 6px 6px 30px 6px;
-    @media screen and (max-width: 1300px) {
-      width: 30%;
-    }
-    @media screen and (max-width: 992px) {
-      width: 50%;
-    }
   }
 
   .logo {
@@ -170,11 +167,14 @@ export default {
     width: 100%;
     display: flex;
     align-items: flex-start;
-    text-align: none;
     .players {
+      max-width: 400px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
       list-style: none;
       text-align: left;
-      padding-left: 20px;
+      padding: 0 20px;
       li {
         display: flex;
         flex-direction: row;
@@ -208,7 +208,16 @@ export default {
     }
   }
 
-  .pass_id {
+  .mini-map {
+    table {
+      margin: 0 auto;
+    }
+    .cell {
+      padding: 7px;
+    }
+  }
+
+  .pass_code {
     margin-left: 10px;
     background-color: #222c3c;
     box-shadow: 0 1px 5px 0 #18191a;
@@ -224,7 +233,11 @@ export default {
     }
   }
 
-  .game_id {
+  .divider-custom {
+    margin: 25px auto 0 auto;
+  }
+
+  .code {
     display: flex;
     flex-direction: column;
     height: 65px;

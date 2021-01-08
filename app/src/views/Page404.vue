@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="page404">
     <div class="content">
       <gb-heading tag="h1" class="logo">Not Found !</gb-heading>
       <!-- Navigation -->
@@ -19,7 +19,7 @@ export default {
 </script>
 
 <style lang="scss">
-.home {
+.page404 {
   display: flex;
   align-items: center;
   justify-content: center;
