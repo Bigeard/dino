@@ -13,6 +13,7 @@
                     <p>Code : {{ game.code }}</p>
                     <p>Created by : {{ game.created_at }}</p>
                     <p>Update at : {{ game.update_at }}</p>
+                    <gb-button v-if="game.status" class="joinGame" click="#">Jouer mon tours</gb-button>
                 </div>
             </div>
         </div>
@@ -57,6 +58,10 @@ export default {
     padding-left: 3%;
     color: #171e29;
     text-align: left;
+  }
+
+  .joinGame {
+    margin: 5px;
   }
 }
 </style>
