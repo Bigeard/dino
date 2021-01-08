@@ -1,11 +1,18 @@
 <template>
   <div class="room">
     <div class="content">
-      <div class="user">
+      <div class="content-game">
         <p class="game_code" v-if="game.code">
           Game Code :
-          <span class="pass_code">{{ game.code }}</span>
+          <input class="pass_code" id="code" :value="game.code" />
         </p>
+        <gb-button
+          class="copy-game-code"
+          @click="copyGameCode()"
+          right-icon="save"
+        >
+          Copy
+        </gb-button>
       </div>
       <gb-divider class="divider-custom" />
       <!-- Navigation -->
@@ -24,14 +31,26 @@
             ✔️
           </gb-button>
         </div>
-        <gb-badge>Players : 5/5</gb-badge>
+        <gb-badge>Players : {{ players.length }} / 5</gb-badge>
         <div class="player_list">
           <ul class="players">
-            <li v-for="(player, i) in players" :key="i">
+            <li
+              v-for="(player, i) in players"
+              :key="i"
+              :class="`Player${i + 1}`"
+            >
               <img src="../../public/img/icons/zorfiL.gif" />{{ player }}
             </li>
           </ul>
         </div>
+        <gb-divider class="divider-custom2" />
+        <gb-button
+          class="generate-new-map"
+          @click="generateNewMap()"
+          right-icon="refresh"
+        >
+          Generate New Map
+        </gb-button>
         <div class="mini-map">
           <table>
             <tr v-for="(row, y) in game.map" :key="y">
@@ -57,7 +76,7 @@
           <gb-button
             :disabled="status !== 'normal' || game.name === ''"
             @click="$router.push('/game')"
-            right-icon="gps_fixed"
+            right-icon="arrow_forward"
           >
             Strart Game
           </gb-button>
@@ -79,7 +98,7 @@ export default {
       gamename: "",
       width: 20,
       height: 20,
-      players: ["toto_1", "toto_2", "toto_3", "toto_4", "toto_5"],
+      players: ["toto_1", "toto_2", "toto_3", "toto_4"],
       numObstacle: 40,
       numItems: 6,
       info: null,
@@ -115,6 +134,10 @@ export default {
         this.error = "A minimum of 3 characters is required";
         this.status = "error";
         this.info = null;
+      } else if (v.length > 13) {
+        this.error = "A maximum of 12 characters is required";
+        this.status = "error";
+        this.info = null;
       } else if (!/^[\w.]*$/.test(v)) {
         this.error =
           'you can only use the following characters: "A-z" "0-9" "_"';
@@ -130,6 +153,12 @@ export default {
       if (this.status === "normal") {
         this.game.name = this.gamename;
       }
+    },
+    copyGameCode() {
+      const copyText = document.getElementById("code");
+      copyText.select();
+      copyText.setSelectionRange(0, 99999);
+      document.execCommand("copy");
     }
   }
 };
@@ -163,22 +192,33 @@ export default {
     margin-bottom: 40px !important;
   }
 
+  .content-game {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+  }
+
   .player_list {
     width: 100%;
     display: flex;
     align-items: flex-start;
     .players {
-      max-width: 400px;
+      max-width: 321px;
+      height: 110px;
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-between;
+      justify-content: space-around;
+      align-items: center;
       list-style: none;
       text-align: left;
       padding: 0 20px;
       li {
         display: flex;
+        height: 48px;
         flex-direction: row;
         align-items: center;
+        border-radius: 25px;
+        padding-right: 10px;
       }
     }
   }
@@ -213,6 +253,7 @@ export default {
       margin: 0 auto;
     }
     .cell {
+      cursor: default;
       padding: 7px;
     }
   }
@@ -235,6 +276,15 @@ export default {
 
   .divider-custom {
     margin: 25px auto 0 auto;
+  }
+
+  .divider-custom2 {
+    margin: 10px auto 25px auto;
+  }
+
+  .generate-new-map {
+    width: 322px !important;
+    margin: 0 auto 20px auto !important;
   }
 
   .code {

@@ -121,6 +121,10 @@ export default {
         this.error = "A minimum of 3 characters is required";
         this.status = "error";
         this.info = null;
+      } else if (v.length > 13) {
+        this.error = "A maximum of 12 characters is required";
+        this.status = "error";
+        this.info = null;
       } else if (!/^[\w.]*$/.test(v)) {
         this.error =
           'you can only use the following characters: "A-z" "0-9" "_"';
