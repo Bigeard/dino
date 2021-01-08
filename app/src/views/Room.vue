@@ -4,7 +4,7 @@
       <div class="content-game">
         <p class="game_code" v-if="game.code">
           Game Code :
-          <input class="pass_code" id="code" :value="game.code" />
+          <input class="pass_code" id="code" :value="game.code" disabled />
         </p>
         <gb-button
           class="copy-game-code"
@@ -166,16 +166,11 @@ export default {
 
 <style lang="scss">
 .room {
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
   overflow-y: scroll;
-
-  .error_valid,
-  .warning_valid {
-    display: none;
-  }
 
   .content {
     border: 1px solid #3f536e;
@@ -186,16 +181,64 @@ export default {
     margin: 6px 6px 30px 6px;
   }
 
-  .logo {
-    font-size: 65px !important;
-    line-height: normal !important;
-    margin-bottom: 40px !important;
-  }
-
   .content-game {
     width: 100%;
     display: flex;
     justify-content: space-around;
+  }
+
+  .game_code {
+    margin: 0;
+  }
+
+  .pass_code {
+    width: 25px;
+    background-color: #222c3c;
+    color: #fff;
+    box-shadow: 0 1px 5px 0 #18191a;
+    padding: 10px;
+    margin-left: 10px;
+    border-radius: 4px;
+    border: none;
+  }
+
+  .code {
+    display: flex;
+    flex-direction: column;
+    height: 65px;
+    justify-content: space-between;
+  }
+
+  .error_valid,
+  .warning_valid {
+    display: none;
+  }
+
+  .divider-custom {
+    margin: 25px auto 0 auto;
+  }
+
+  .nav {
+    .gb-base-button,
+    .gb-field-input {
+      width: 100%;
+      margin-top: 20px;
+    }
+  }
+
+  .game {
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 30px;
+    .game_name {
+      width: 80% !important;
+      margin-right: 10px;
+    }
+    .gb-base-button {
+      width: 20% !important;
+      height: 42px;
+    }
   }
 
   .player_list {
@@ -213,8 +256,8 @@ export default {
       text-align: left;
       padding: 0 20px;
       li {
-        display: flex;
         height: 48px;
+        display: flex;
         flex-direction: row;
         align-items: center;
         border-radius: 25px;
@@ -223,29 +266,13 @@ export default {
     }
   }
 
-  .game {
-    display: flex;
-    align-items: flex-end;
-    margin-bottom: 30px;
-    width: 100%;
-    .game_name {
-      width: 80% !important;
-      margin-right: 10px;
-    }
-    .gb-base-button {
-      width: 20% !important;
-      height: 42px;
-    }
+  .divider-custom2 {
+    margin: 10px auto 25px auto;
   }
 
-  .choice_button {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    button {
-      width: 45% !important;
-      height: 45px;
-    }
+  .generate-new-map {
+    width: 322px !important;
+    margin: 0 auto 20px auto !important;
   }
 
   .mini-map {
@@ -258,40 +285,14 @@ export default {
     }
   }
 
-  .pass_code {
-    margin-left: 10px;
-    background-color: #222c3c;
-    box-shadow: 0 1px 5px 0 #18191a;
-    padding: 10px;
-    border-radius: 4px;
-  }
-
-  .nav {
-    .gb-base-button,
-    .gb-field-input {
-      width: 100%;
-      margin-top: 20px;
-    }
-  }
-
-  .divider-custom {
-    margin: 25px auto 0 auto;
-  }
-
-  .divider-custom2 {
-    margin: 10px auto 25px auto;
-  }
-
-  .generate-new-map {
-    width: 322px !important;
-    margin: 0 auto 20px auto !important;
-  }
-
-  .code {
+  .choice_button {
     display: flex;
-    flex-direction: column;
-    height: 65px;
+    width: 100%;
     justify-content: space-between;
+    button {
+      width: 45% !important;
+      height: 45px;
+    }
   }
 }
 </style>
