@@ -1,13 +1,15 @@
 <template>
     <div class="allGames">
-        <div class="option">
-            <gb-button class="icon" @click="$router.push('/')" right-icon="home" />
-            <gb-button class="icon" @click="$router.push('/about')" right-icon="info" />
-        </div>
         <div class="content">
+            <gb-button class="icon" @click="$router.push('/')" right-icon="home" />
             <gb-heading tag="h1" class="logo">Dino 🦖</gb-heading>
+            <gb-button class="icon" @click="$router.push('/about')" right-icon="info" />
             <div>
                 <h2>Mes parties :</h2>
+                <filter id="En cours">
+			          </filter>
+                <filter id="Terminé">
+			          </filter>
                 <div class="card" v-for="game in games" :key="game.id">
                     <!-- <p>Round : {{ round }}</p> -->
                     <p>Code : {{ game.code }}</p>
@@ -20,6 +22,7 @@
     </div>
 </template>
 <script>
+/* eslint-disable */
 import Games from "../allGames/index.js";
 export default {
   name: "AllGames",
@@ -62,6 +65,10 @@ export default {
 
   .joinGame {
     margin: 5px;
+  }
+
+  h2 {
+    text-align: left;
   }
 }
 </style>
