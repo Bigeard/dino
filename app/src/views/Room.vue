@@ -7,14 +7,14 @@
         <div class="game">
           <gb-input
             class="game_name"
-            v-model="username"
+            v-model="gamename"
             label="Name of this game"
             placeholder="name is required"
             :info="info"
             :error="error"
             :status="status"
           />
-          <gb-button @click="checkUsername" :class="status + '_valid'">
+          <gb-button @click="checkGamename" :class="status + '_valid'">
             ✔️
           </gb-button>
         </div>
@@ -29,15 +29,11 @@
           </ul>
         </div>
         <div class="choice_button">
-          <gb-button
-            :disabled="!user.pass_id"
-            @click="$router.push('/')"
-            right-icon="home"
-          >
+          <gb-button @click="$router.push('/')" right-icon="home">
             Home
           </gb-button>
           <gb-button
-            :disabled="!user.pass_id"
+            :disabled="!game.game_id"
             @click="$router.push('/game')"
             right-icon="gps_fixed"
           >
@@ -48,9 +44,9 @@
       <gb-divider />
       <!-- User Info -->
       <div class="user">
-        <p class="game_id" v-if="user.pass_id">
-          Pass ID :
-          <span class="pass_id">{{ user.pass_id }}</span>
+        <p class="game_id" v-if="game.game_id">
+          Game ID :
+          <span class="pass_id">{{ game.game_id }}</span>
         </p>
       </div>
     </div>
@@ -61,32 +57,32 @@
 export default {
   name: "Room",
   async beforeMount() {
-    let user = await this.$db.user.get({ id: 0 });
-    if (user === undefined) {
-      user = {
+    let game = await this.$db.game.get({ id: 0 });
+    if (game === undefined) {
+      game = {
         id: 0,
-        username: "",
-        pass_id: null,
+        gamename: "",
+        game_id: null,
         updated_at: new Date()
       };
-      await this.$db.user.add(user);
+      await this.$db.game.add(game);
     }
-    this.onChangeUsername(user.username);
+    this.onChangeGame(game.game);
     if (this.status === "normal") {
-      this.username = user.username;
-      this.user = user;
+      this.gamename = game.gamename;
+      this.game = game;
     }
   },
   data() {
     return {
       code_game: null,
-      username: null,
+      gamename: null,
       info: null,
       error: null,
       status: "normal",
-      user: {
-        username: null,
-        pass_id: null
+      game: {
+        gamename: null,
+        game_id: null
       }
     };
   },
@@ -96,12 +92,12 @@ export default {
         this.$router.push("/game");
       }
     },
-    username(v) {
-      this.onChangeUsername(v);
+    game(v) {
+      this.onChangeGamename(v);
     }
   },
   methods: {
-    onChangeUsername(v) {
+    onChangeGamename(v) {
       if (v.length === 0) {
         this.info = "Please add a username to start playing";
         this.status = "warning";
@@ -121,15 +117,15 @@ export default {
         this.status = "normal";
       }
     },
-    async checkUsername() {
+    async checkGamename() {
       if (this.status === "normal") {
-        const user = {
+        const game = {
           id: 0,
-          username: this.username,
-          pass_id: "EUYahAs3u77YP9Bb"
+          gamename: this.gamename,
+          game_id: "EUYahAs3u77YP9Bb"
         };
-        await this.$db.user.update(0, user);
-        this.user = user;
+        await this.$db.game.update(0, game);
+        this.game = game;
       }
     }
   }
