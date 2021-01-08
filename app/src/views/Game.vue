@@ -86,11 +86,7 @@
           </div>
         </div>
       </div>
-      <div
-        class="win"
-        v-if="players.length === 1 && !closeDialogWin"
-        @click="closeWin"
-      >
+      <div class="win" v-if="actionPlayer && closeDialogWin" @click="closeWin">
         <gb-heading tag="h1"
           >{{ actionPlayer.obj.name }} won the game !</gb-heading
         >
@@ -104,20 +100,19 @@
         :class="
           `info-obj info-player Player${p.numPlayer + 1} ${
             !i ? 'dot-background' : ''
-          }`
+          }
+          ${p.dead ? 'dead-background' : ''}`
         "
         v-for="(p, i) in players"
         :key="i"
       >
         <div class="stat">
           <b>{{ p.name }}</b>
-          <span v-if="p.stat.health">- Health : {{ p.stat.health }}</span>
+          <span>- Health : {{ p.stat.health }}</span>
           <span>- Damage : {{ _data.calcTotalDamage(p) }}</span>
           <span>- Move : {{ p.stat.move }}</span>
         </div>
-        <div :class="`view Player view-player`">
-          <span>{{ p.icon }}</span>
-        </div>
+        <div :class="`view Player view-player ${p.dead ? 'Dead' : ''}`"></div>
       </div>
     </div>
   </div>
@@ -143,7 +138,7 @@ export default {
       setTimeout;
     },
     closeWin() {
-      this.closeDialogWin = true;
+      this.closeDialogWin = false;
     },
     action(e) {
       const x = Number(e.target.attributes.x.value);
@@ -174,7 +169,7 @@ table {
 }
 
 .option {
-  z-index: 100;
+  z-index: 10;
   position: fixed;
   padding: 7px 5px 5px 5px;
   margin: auto;
@@ -227,21 +222,21 @@ table {
 
 .info {
   cursor: pointer;
+  z-index: 100;
   position: fixed;
   margin: 20px auto;
   bottom: 8px;
   left: 0;
   right: 0;
   width: 260px;
+  max-height: 400px;
   background: #171e29;
   box-shadow: 0 1px 5px 0 #171e29;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  flex-direction: column;
   padding: 16px;
   border-radius: 6px;
   border: 2px dashed #ffffff7a;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 
   h2 {
     margin: 0 auto;
@@ -255,7 +250,9 @@ table {
   .info-player {
     padding: 8px;
     border-radius: 6px;
-    margin: auto -8px;
+    margin: auto -7px;
+    min-height: 70px;
+    display: block;
   }
 
   .dot-background {
@@ -270,6 +267,16 @@ table {
       radial-gradient(circle at 0 100%, #000, #000 1px, transparent 1px),
       radial-gradient(circle at 100% 0, #000, #000 1px, transparent 1px),
       radial-gradient(circle at 100% 100%, #000, #000 1px, transparent 1px);
+  }
+
+  .dead-background {
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      #ffffff10 10px,
+      #ffffff10 20px
+    );
   }
 
   .info-obj {
@@ -311,6 +318,10 @@ table {
 .Player {
   background-image: url("../assets/game/zorfiL.gif");
   background-size: cover;
+}
+
+.Dead {
+  background-image: url("../assets/game/zorfiL_dead.png");
 }
 
 .Player1 {

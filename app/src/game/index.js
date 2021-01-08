@@ -61,10 +61,11 @@ export default class Game {
           const index = this.players
             .map(e => e.name)
             .indexOf(this.map[y][x].obj.name);
-          console.log(index);
+
           if (index > -1) {
             this.players[index].dead = true;
           }
+
           this.map[y][x] = {
             name: "Ground",
             x: x,
@@ -75,7 +76,10 @@ export default class Game {
           };
 
           // If he is the last player, he has won!
-          if (this.players.length === 1) {
+          if (
+            this.players.map(e => e.dead).filter(e => e === false).length === 1
+          ) {
+            this.closeDialogWin = true;
             console.log(this.actionPlayer.name + " WIN !!!");
           }
         }

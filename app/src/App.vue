@@ -7,6 +7,7 @@
 <style lang="scss">
 html,
 body {
+  scrollbar-width: thin;
   background-color: #1b2431;
   margin: 0;
   height: 100%;
@@ -39,5 +40,15 @@ body {
 
 [class^="gb-"]:not(.gb-base-icon):not(.gb-base-heading) {
   font-size: 16px !important;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  background-color: #171e29;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ffffff7a;
 }
 </style>
