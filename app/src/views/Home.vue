@@ -178,8 +178,7 @@ export default {
     border-radius: 8px;
     background-color: #171e29;
     padding: 30px;
-    margin-top: 30px;
-    margin: 6px 6px 30px 6px;
+    margin: 100px 6px 30px 6px;
   }
 
   .logo {
