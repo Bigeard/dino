@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c5c09050-bc61-4478-9091-e4337d7cdfef" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/serve/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/serve/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/srv/app/models/action.model.js" beforeDir="false" afterPath="$PROJECT_DIR$/srv/app/models/action.model.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/srv/app/models/game.model.js" beforeDir="false" afterPath="$PROJECT_DIR$/srv/app/models/game.model.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/srv/app/models/item.model.js" beforeDir="false" afterPath="$PROJECT_DIR$/srv/app/models/item.model.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/srv/app/models/player.model.js" beforeDir="false" afterPath="$PROJECT_DIR$/srv/app/models/player.model.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,11 +39,31 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1610107313372</updated>
-      <workItem from="1610107314412" duration="1206000" />
+      <workItem from="1610107314412" duration="1879000" />
+      <workItem from="1610196475989" duration="135000" />
+      <workItem from="1610262883924" duration="28000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="2686" y="310" width="426" height="493" key="FileChooserDialogImpl" timestamp="1610196607785">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2686" y="310" width="426" height="493" key="FileChooserDialogImpl/1920.0.1920.1080/0.27.1920.1053@1920.0.1920.1080" timestamp="1610196607785" />
   </component>
 </project>
