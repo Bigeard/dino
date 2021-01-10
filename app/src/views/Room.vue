@@ -171,7 +171,6 @@ export default {
       }, 3000);
     },
     generateNewMap() {
-      console.log("TEST");
       const { new_map, gen_player } = generateMap(
         this.width,
         this.width,
@@ -190,18 +189,9 @@ export default {
 
 <style lang="scss">
 .room {
-  // height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  #info-clipboard {
-    position: absolute;
-    bottom: 160px;
-    left: auto;
-    right: auto;
-    text-align: center;
-  }
 
   .content {
     border: 1px solid #3f536e;
@@ -337,6 +327,14 @@ export default {
       width: 45% !important;
       height: 45px;
     }
+  }
+
+  #info-clipboard {
+    position: absolute;
+    bottom: 160px;
+    left: auto;
+    right: auto;
+    text-align: center;
   }
 }
 </style>

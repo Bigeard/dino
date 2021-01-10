@@ -10,7 +10,6 @@ body {
   scrollbar-width: thin;
   background-color: #1b2431;
   margin: 0;
-  // height: 100%;
   width: 100%;
   background-size: 10px 10px;
   background-image: radial-gradient(
@@ -31,11 +30,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #fff;
-  // position: fixed;
-  // top: 0;
-  // left: 0;
-  // width: 100vw;
-  // height: 100vh;
 }
 
 [class^="gb-"]:not(.gb-base-icon):not(.gb-base-heading) {
