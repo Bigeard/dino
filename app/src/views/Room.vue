@@ -17,7 +17,7 @@
       <gb-divider class="divider-custom" />
       <!-- Navigation -->
       <div class="nav">
-        <div class="game">
+        <div class="nav-game">
           <gb-input
             class="game_name"
             v-model="gamename"
@@ -48,6 +48,7 @@
           class="generate-new-map"
           @click="generateNewMap()"
           right-icon="refresh"
+          v-model="generateNewMapCount"
         >
           Generate New Map
         </gb-button>
@@ -83,6 +84,13 @@
         </div>
       </div>
     </div>
+    <gb-toast
+      v-if="infoClipboard !== ''"
+      id="info-clipboard"
+      color="purple"
+      :closable="false"
+      >{{ infoClipboard }}</gb-toast
+    >
   </div>
 </template>
 
@@ -103,20 +111,13 @@ export default {
       numItems: 6,
       info: null,
       status: "normal",
-      error: null
+      error: null,
+      infoClipboard: "",
+      generateNewMapCount: 0
     };
   },
   beforeMount() {
-    const { new_map, gen_player } = generateMap(
-      this.width,
-      this.width,
-      this.players,
-      this.numObstacle,
-      this.numItems,
-      items
-    );
-    this.game.map = new_map;
-    this.game.players = gen_player;
+    this.generateNewMap();
     this.onChangeGamename(this.gamename);
   },
   watch: {
@@ -152,13 +153,36 @@ export default {
     async checkGamename() {
       if (this.status === "normal") {
         this.game.name = this.gamename;
+        this.game.code = this.gamename + "-code";
       }
     },
     copyGameCode() {
-      const copyText = document.getElementById("code");
-      copyText.select();
-      copyText.setSelectionRange(0, 99999);
-      document.execCommand("copy");
+      navigator.clipboard.writeText(this.game.code).then(
+        () => {
+          this.infoClipboard = "Copying to clipboard was successful!";
+        },
+        err => {
+          this.infoClipboard = "Could not copy text... " + err;
+          console.error("Async: Could not copy text: ", err);
+        }
+      );
+      setTimeout(() => {
+        this.infoClipboard = "";
+      }, 3000);
+    },
+    generateNewMap() {
+      console.log("TEST");
+      const { new_map, gen_player } = generateMap(
+        this.width,
+        this.width,
+        this.players,
+        this.numObstacle,
+        this.numItems,
+        items
+      );
+      this.game.map = new_map;
+      this.game.players = gen_player;
+      this.generateNewMapCount++;
     }
   }
 };
@@ -166,11 +190,18 @@ export default {
 
 <style lang="scss">
 .room {
-  height: 100vh;
+  // height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow-y: scroll;
+
+  #info-clipboard {
+    position: absolute;
+    bottom: 160px;
+    left: auto;
+    right: auto;
+    text-align: center;
+  }
 
   .content {
     border: 1px solid #3f536e;
@@ -185,6 +216,7 @@ export default {
     width: 100%;
     display: flex;
     justify-content: space-around;
+    flex-wrap: wrap;
   }
 
   .game_code {
@@ -192,7 +224,7 @@ export default {
   }
 
   .pass_code {
-    width: 25px;
+    width: 200px;
     background-color: #222c3c;
     color: #fff;
     box-shadow: 0 1px 5px 0 #18191a;
@@ -200,6 +232,8 @@ export default {
     margin-left: 10px;
     border-radius: 4px;
     border: none;
+    margin-right: 10px;
+    font-size: 20px;
   }
 
   .code {
@@ -223,6 +257,10 @@ export default {
     .gb-field-input {
       width: 100%;
       margin-top: 20px;
+    }
+
+    .nav-game {
+      margin-bottom: 20px;
     }
   }
 
@@ -255,6 +293,7 @@ export default {
       list-style: none;
       text-align: left;
       padding: 0 20px;
+      margin: 10px auto;
       li {
         height: 48px;
         display: flex;
@@ -271,7 +310,6 @@ export default {
   }
 
   .generate-new-map {
-    width: 322px !important;
     margin: 0 auto 20px auto !important;
   }
 
@@ -281,7 +319,13 @@ export default {
     }
     .cell {
       cursor: default;
-      padding: 7px;
+      padding: 10px;
+    }
+
+    @media (max-width: 520px) {
+      .cell {
+        padding: calc(4px + (100vw * 0.005)) !important;
+      }
     }
   }
 
