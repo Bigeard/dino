@@ -1,21 +1,22 @@
 <template>
     <div class="allGames">
         <div class="content">
-            <gb-button class="icon" @click="$router.push('/')" right-icon="home" />
             <gb-heading tag="h1" class="logo">Dino 🦖</gb-heading>
-            <gb-button class="icon" @click="$router.push('/about')" right-icon="info" />
+            <gb-button class="icon" @click="$router.push('/')" right-icon="home">Home </gb-button><br>
             <div>
-                <h2>Mes parties :</h2>
-                <filter id="En cours">
+                <h2>My Games :</h2>
+                <filter id="inProgress">
 			          </filter>
-                <filter id="Terminé">
+                <filter id="end">
 			          </filter>
                 <div class="card" v-for="game in games" :key="game.id">
+                    <div class="myDiv" v-if="getStatus(game.status)">
                     <!-- <p>Round : {{ round }}</p> -->
                     <p>Code : {{ game.code }}</p>
                     <p>Created by : {{ game.created_at }}</p>
                     <p>Update at : {{ game.update_at }}</p>
-                    <gb-button v-if="game.status" class="joinGame" click="#">Jouer mon tours</gb-button>
+                    <button v-if="game.status" class="joinGame" click="#">Go !</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -28,6 +29,17 @@ export default {
   name: "AllGames",
   data() {
     return new Games();
+  },
+  methods: {
+    getStatus: function (status) {
+      if(status){
+        $('#myDiv').addClass('success');
+        return true;
+      }else{
+        $('#myDiv').removeClass('success');
+        return true;
+      }
+    }
   },
 };
 </script>
@@ -45,7 +57,7 @@ export default {
     padding: 30px;
     margin-top: 30px;
     margin: 6px 6px 30px 6px;
-    width: 40%;
+    width: 20%;
   }
 
   .logo {
@@ -58,17 +70,35 @@ export default {
     border-radius: 8px;
     background-color: #d4d4d4;
     margin: 6px 6px 30px 6px;
-    padding-left: 3%;
+    padding: 3%;
     color: #171e29;
-    text-align: left;
+    text-align: center;
+  }
+
+  .success {
+    background-color: rgb(24, 133, 24);
   }
 
   .joinGame {
     margin: 5px;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    border-color: #3f536e;
+    cursor: pointer;
   }
 
   h2 {
     text-align: left;
+  }
+
+  .icon {
+    margin: 6px 6px 6px;
+    width: 80%;
+  }
+
+  .btnGo {
+
   }
 }
 </style>
