@@ -98,7 +98,6 @@ export default {
     background-color: #ac3333;
     margin: 6px 6px 30px 6px;
     padding: 3%;
-    color: #171e29;
     text-align: center;
   }
 
