@@ -31,7 +31,33 @@ import Games from "../allGames/index.js";
 export default {
   name: "AllGames",
   data() {
-    return new Games();
+    return {
+    games: [{
+      id: 1,
+      code: 12345,
+      created_at: "01/01/2021",
+      update_at: "08/01/2021",
+      status: true,
+      name: "Game 1"
+    },
+    {
+      id: 2,
+      code: 123,
+      created_at: "02/01/2021",
+      update_at: "07/01/2021",
+      status: false,
+      name: "Game 2"
+    },
+    {
+      id: 3,
+      code: 1235,
+      created_at: "04/01/2021",
+      update_at: "05/01/2021",
+      status: false,
+      name: "Game 3"
+    }],
+    players: ["toto_1", "toto_2", "toto_3", "toto_4"],
+    }
   }
 };
 </script>
