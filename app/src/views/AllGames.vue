@@ -76,7 +76,6 @@ export default {
 .allGames {
   align-items: center;
   justify-content: center;
-  height: 100vh;
   display: flex;
 
   .content {
@@ -86,7 +85,6 @@ export default {
     padding: 30px;
     margin-top: 30px;
     margin: 6px 6px 30px 6px;
-    width: 20%;
   }
 
   .logo {
@@ -126,7 +124,30 @@ export default {
     width: 80%;
   }
 
-  .btnGo {
+  .player_list {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    .players {
+      max-width: 321px;
+      height: 110px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      align-items: center;
+      list-style: none;
+      text-align: left;
+      padding: 0 20px;
+      margin: 10px auto;
+      li {
+        height: 48px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        border-radius: 25px;
+        padding-right: 10px;
+      }
+    }
   }
 }
 </style>
