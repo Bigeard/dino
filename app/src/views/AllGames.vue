@@ -19,6 +19,18 @@
           <p>Code : {{ game.code }}</p>
           <p>Created by : {{ game.created_at }}</p>
           <p>Update at : {{ game.update_at }}</p>
+          <gb-badge>Players : {{ players.length }} / 5</gb-badge>
+          <div class="player_list">
+            <ul class="players">
+              <li
+                v-for="(player, i) in players"
+                :key="i"
+                :class="`Player${i + 1}`"
+              >
+                <img src="../../public/img/icons/zorfiL.gif" />{{ player }}
+              </li>
+            </ul>
+          </div>
           <button v-if="game.status" class="joinGame" click="#">Go !</button>
         </div>
       </div>
@@ -27,36 +39,35 @@
 </template>
 <script>
 /* eslint-disable */
-import Games from "../allGames/index.js";
 export default {
   name: "AllGames",
   data() {
     return {
-    games: [{
-      id: 1,
-      code: 12345,
-      created_at: "01/01/2021",
-      update_at: "08/01/2021",
-      status: true,
-      name: "Game 1"
-    },
-    {
-      id: 2,
-      code: 123,
-      created_at: "02/01/2021",
-      update_at: "07/01/2021",
-      status: false,
-      name: "Game 2"
-    },
-    {
-      id: 3,
-      code: 1235,
-      created_at: "04/01/2021",
-      update_at: "05/01/2021",
-      status: false,
-      name: "Game 3"
-    }],
-    players: ["toto_1", "toto_2", "toto_3", "toto_4"],
+      games: [{
+        id: 1,
+        code: 12345,
+        created_at: "01/01/2021",
+        update_at: "08/01/2021",
+        status: true,
+        name: "Game 1"
+      },
+      {
+        id: 2,
+        code: 123,
+        created_at: "02/01/2021",
+        update_at: "07/01/2021",
+        status: false,
+        name: "Game 2"
+      },
+      {
+        id: 3,
+        code: 1235,
+        created_at: "04/01/2021",
+        update_at: "05/01/2021",
+        status: false,
+        name: "Game 3"
+      }],
+      players: ["toto_1", "toto_2", "toto_3", "toto_4"],
     }
   }
 };
