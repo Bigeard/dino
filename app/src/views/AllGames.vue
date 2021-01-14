@@ -7,8 +7,6 @@
       ><br />
       <div>
         <h2>My Games :</h2>
-        <filter id="inProgress"> </filter>
-        <filter id="end"> </filter>
         <div
           :class="'card ' + game.status"
           v-for="game in games"
@@ -30,8 +28,7 @@
               </li>
             </ul>
           </div>
-          <!-- <button v-if="game.status" class="joinGame" click="#">Go !</button> -->
-          <gb-button v-if="game.status == 'inProgress'" class="icon">Go</gb-button>
+          <gb-button :disabled="game.status != 'yourTurn'" class="icon">{{ game.status }}</gb-button>
         </div>
       </div>
     </div>
@@ -66,6 +63,14 @@ export default {
         update_at: "05/01/2021",
         status: "inProgress",
         name: "Game 3"
+      },
+      {
+        id: 4,
+        code: 132,
+        created_at: "02/01/2021",
+        update_at: "07/01/2021",
+        status: "yourTurn",
+        name: "Game 4"
       }],
       players: ["toto_1", "toto_2", "toto_3", "toto_4"],
     }
@@ -111,14 +116,6 @@ export default {
 
   .inProgress {
     background-color: #3f536e;
-  }
-  .joinGame {
-    margin: 5px;
-    height: 50px;
-    width: 50px;
-    border-radius: 50%;
-    border-color: #3f536e;
-    cursor: pointer;
   }
 
   h2 {
