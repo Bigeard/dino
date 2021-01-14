@@ -34,7 +34,7 @@ db.mongoose
 
 // simple route
 app.get("/", (req, res) => {
-  res.json({ message: "This is not a website." });
+  res.json({ message: "dino-game.tech 's API" });
 });
 
 app.listen(PORT, () => {
