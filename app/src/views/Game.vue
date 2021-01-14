@@ -123,7 +123,7 @@ import Game from "../game/index.js";
 export default {
   name: "Game",
   data() {
-    return new Game(this.$db.game, this.$route.params.code);
+    return new Game(this);
   },
   methods: {
     infoGame() {

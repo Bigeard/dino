@@ -12,25 +12,28 @@ export default class Game {
   closeDialogWin = false;
   closeDialogInfo = false;
 
-  constructor(db, code) {
+  constructor(vue) {
     console.log("Start Game !");
-    this.loadGame(db, code);
+    this.loadGame(vue);
   }
 
   /**
    * The function allows to load the game by searching in IndexedDB
-   * @param {*} db IndexedDB API
-   * @param {*} code Code to join the game
+   * @param {*} vue Vue component
    */
-  async loadGame(db, code) {
-    const { name, map, players, width, height } = await db.get({
-      code: code
+  async loadGame(vue) {
+    const game = await vue.$db.game.get({
+      code: vue.$route.params.code
     });
-    this.name = name;
-    this.map = map;
-    this.players = players;
-    this.width = width;
-    this.height = height;
+    if (game) {
+      this.name = game.name;
+      this.map = game.map;
+      this.players = game.players;
+      this.width = game.width;
+      this.height = game.height;
+    } else {
+      vue.$router.push("/error");
+    }
   }
 
   /**

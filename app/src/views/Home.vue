@@ -21,7 +21,7 @@
         </gb-button>
         <gb-button
           :disabled="!user.pass_id"
-          @click="$router.push('/game')"
+          @click="$router.push('/allgame')"
           right-icon="search"
         >
           My Games
@@ -91,7 +91,7 @@ export default {
   watch: {
     code_game(v) {
       if (v.length > 8) {
-        this.$router.push("/game");
+        this.$router.push("/room/" + v);
       }
     },
     username(v) {
