@@ -23,12 +23,18 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/About.vue")
   },
   {
-    path: "/game",
+    path: "/game/:code",
     name: "Game",
     component: Game
   },
+  // @TODO This is temporary
   {
     path: "/room",
+    name: "Room",
+    component: Room
+  },
+  {
+    path: "/room/:code",
     name: "Room",
     component: Room
   },
