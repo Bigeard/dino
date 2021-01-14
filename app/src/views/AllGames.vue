@@ -14,7 +14,6 @@
           v-for="game in games"
           :key="game.id"
         >
-          <!-- <p>Round : {{ round }}</p> -->
           <p>Name : {{ game.name }}</p>
           <p>Code : {{ game.code }}</p>
           <p>Created by : {{ game.created_at }}</p>
@@ -31,7 +30,8 @@
               </li>
             </ul>
           </div>
-          <button v-if="game.status" class="joinGame" click="#">Go !</button>
+          <!-- <button v-if="game.status" class="joinGame" click="#">Go !</button> -->
+          <gb-button v-if="game.status == 'inProgress'" class="icon">Go</gb-button>
         </div>
       </div>
     </div>
@@ -48,7 +48,7 @@ export default {
         code: 12345,
         created_at: "01/01/2021",
         update_at: "08/01/2021",
-        status: true,
+        status: "winner",
         name: "Game 1"
       },
       {
@@ -56,7 +56,7 @@ export default {
         code: 123,
         created_at: "02/01/2021",
         update_at: "07/01/2021",
-        status: false,
+        status: "looser",
         name: "Game 2"
       },
       {
@@ -64,7 +64,7 @@ export default {
         code: 1235,
         created_at: "04/01/2021",
         update_at: "05/01/2021",
-        status: false,
+        status: "inProgress",
         name: "Game 3"
       }],
       players: ["toto_1", "toto_2", "toto_3", "toto_4"],
@@ -95,16 +95,23 @@ export default {
   .card {
     border: 1px solid #3f536e;
     border-radius: 8px;
-    background-color: #ac3333;
+    background-color: #616060;
     margin: 6px 6px 30px 6px;
     padding: 3%;
     text-align: center;
   }
 
-  .true {
+  .winner {
     background-color: rgb(24, 133, 24);
   }
 
+  .looser {
+    background-color: #ac3333;
+  }
+
+  .inProgress {
+    background-color: #3f536e;
+  }
   .joinGame {
     margin: 5px;
     height: 50px;
