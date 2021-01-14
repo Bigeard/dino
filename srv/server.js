@@ -4,9 +4,10 @@ const cors = require("cors");
 
 const app = express();
 
+const PORT = process.env.PORT || 8000;
+
 var corsOptions = {
-  origin: ["http://localhost"],
-  port: 8000
+  origin: ["http://localhost:${PORT}"]
 };
 
 app.use(cors(corsOptions));
@@ -33,11 +34,9 @@ db.mongoose
 
 // simple route
 app.get("/", (req, res) => {
-  res.json({ message: "dino-game.tech 's API" });
+  res.json({ message: "This is not a website." });
 });
 
-// set port, listen for requests
-const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
