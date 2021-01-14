@@ -76,7 +76,7 @@
           </gb-button>
           <gb-button
             :disabled="status !== 'normal' || game.name === ''"
-            @click="$router.push('/game')"
+            @click="startGame()"
             right-icon="arrow_forward"
           >
             Strart Game
@@ -154,6 +154,7 @@ export default {
       if (this.status === "normal") {
         this.game.name = this.gamename;
         this.game.code = this.gamename + "-code";
+        this.game._id = this.gamename + "-code";
       }
     },
     copyGameCode() {
@@ -182,6 +183,18 @@ export default {
       this.game.map = new_map;
       this.game.players = gen_player;
       this.generateNewMapCount++;
+    },
+    async startGame() {
+      await this.$db.game.add({
+        _id: this.game._id,
+        name: this.game.name,
+        code: this.game.code,
+        map: this.game.map,
+        players: this.game.players,
+        width: this.width,
+        height: this.height
+      });
+      this.$router.push("/game/" + this.game.code);
     }
   }
 };

@@ -10,7 +10,7 @@ export default new VueIdb({
     { user: "_id, username, pass_id, updated_at" },
     {
       game:
-        "_id, name, map, width, height, players, closeDialogWin, status, created_at, updated_at"
+        "_id, name, code, map, players, width, height, closeDialogWin, status, created_at, updated_at"
     }
   ],
   options: {
