@@ -14,7 +14,7 @@
         />
         <gb-button
           :disabled="!user.pass_id"
-          @click="$router.push('/game')"
+          @click="$router.push('/room')"
           right-icon="add"
         >
           New Game
@@ -59,10 +59,10 @@
 export default {
   name: "Home",
   async beforeMount() {
-    let user = await this.$db.user.get({ id: 0 });
+    let user = await this.$db.user.get({ _id: 0 });
     if (user === undefined) {
       user = {
-        id: 0,
+        _id: 0,
         username: "",
         pass_id: null,
         updated_at: new Date()
@@ -108,6 +108,10 @@ export default {
         this.error = "A minimum of 3 characters is required";
         this.status = "error";
         this.info = null;
+      } else if (v.length > 13) {
+        this.error = "A maximum of 12 characters is required";
+        this.status = "error";
+        this.info = null;
       } else if (!/^[\w.]*$/.test(v)) {
         this.error =
           'you can only use the following characters: "A-z" "0-9" "_"';
@@ -122,7 +126,7 @@ export default {
     async checkUsername() {
       if (this.status === "normal") {
         const user = {
-          id: 0,
+          _id: 0,
           username: this.username,
           pass_id: "EUYahAs3u77YP9Bb"
         };
@@ -151,8 +155,7 @@ export default {
     border-radius: 8px;
     background-color: #171e29;
     padding: 30px;
-    margin-top: 30px;
-    margin: 6px 6px 30px 6px;
+    margin: 100px 6px 30px 6px;
   }
 
   .logo {

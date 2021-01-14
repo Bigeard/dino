@@ -123,7 +123,7 @@ import Game from "../game/index.js";
 export default {
   name: "Game",
   data() {
-    return new Game();
+    return new Game(this.$db.game, this.$route.params.code);
   },
   methods: {
     infoGame() {
@@ -355,7 +355,7 @@ table {
 }
 
 .Item {
-  background: linear-gradient(-45deg, #31ca12, #8db79c, #0cb988);
+  background: linear-gradient(-45deg, #12c2ca, #b68db7, #0c6cb9);
   background-size: 400% 400%;
   animation: Gradient 8s ease infinite;
 }

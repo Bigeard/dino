@@ -2,6 +2,8 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Game from "../views/Game.vue";
+import Room from "../views/Room.vue";
+import Page404 from "../views/Page404.vue";
 
 Vue.use(VueRouter);
 
@@ -21,9 +23,25 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/About.vue")
   },
   {
-    path: "/game",
+    path: "/game/:code",
     name: "Game",
     component: Game
+  },
+  // @TODO This is temporary
+  {
+    path: "/room",
+    name: "Room",
+    component: Room
+  },
+  {
+    path: "/room/:code",
+    name: "Room",
+    component: Room
+  },
+  {
+    path: "*",
+    name: "404",
+    component: Page404
   }
 ];
 

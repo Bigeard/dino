@@ -1,4 +1,3 @@
-import { generateMap } from "./lib";
 import { items } from "./data/items";
 
 export default class Game {
@@ -7,24 +6,26 @@ export default class Game {
   actionPlayer = null;
   select = null;
   items = items;
+  players = [];
   width = 20;
   height = 20;
-  players = ["Robin", "Coco", "Axel", "Clement", "Bigeard"];
   closeDialogWin = false;
   closeDialogInfo = false;
 
-  constructor() {
+  constructor(db, code) {
     console.log("Start Game !");
-    const { new_map, gen_player } = generateMap(
-      this.width, // width
-      this.height, // height
-      this.players, // players
-      40, // numObstacle
-      6, // numItems
-      this.items // items
-    );
-    this.map = new_map;
-    this.players = gen_player;
+    this.loadGame(db, code);
+  }
+
+  async loadGame(db, code) {
+    const { name, map, players, width, height } = await db.get({
+      code: code
+    });
+    this.name = name;
+    this.map = map;
+    this.players = players;
+    this.width = width;
+    this.height = height;
   }
 
   /**
