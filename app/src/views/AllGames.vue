@@ -1,7 +1,9 @@
 <template>
   <div class="allGames">
     <div class="content">
-      <gb-heading tag="h1" class="logo">Dino 🦖</gb-heading>
+      <gb-heading tag="h1" class="logo"
+        >Dino <img src="../assets/game/zorfiL.gif" alt="Dino"
+      /></gb-heading>
       <gb-button class="icon" @click="$router.push('/')" right-icon="home"
         >Home </gb-button
       ><br />
