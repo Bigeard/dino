@@ -38,7 +38,7 @@ const generateMap = (width, height, players, numObstacle, numItems, items) => {
     randCell.name = "Player";
     randCell.obstacle = false;
     randCell.obj = {
-      id: "XXXX",
+      _id: Date.now().toString() + Math.floor(Math.random() * 100).toString(),
       name: players[p],
       img: "/public/img/icons/zorfiL.gif",
       dead: false,

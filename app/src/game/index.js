@@ -1,7 +1,7 @@
 import { items } from "./data/items";
 
 export default class Game {
-  name = "Fun Game !";
+  name = "";
   map = [];
   actionPlayer = null;
   select = null;
@@ -17,6 +17,11 @@ export default class Game {
     this.loadGame(db, code);
   }
 
+  /**
+   * The function allows to load the game by searching in IndexedDB
+   * @param {*} db IndexedDB API
+   * @param {*} code Code to join the game
+   */
   async loadGame(db, code) {
     const { name, map, players, width, height } = await db.get({
       code: code
@@ -38,7 +43,10 @@ export default class Game {
     console.log(`x: ${x} / y: ${y} - ${this.select.name}: `, this.select);
 
     // if the cell is currently in movement / distance selection
-    if (this.map[y][x].view_distance === "Distance") {
+    if (
+      this.map[y][x].view_distance === "Distance" &&
+      this.players[0]._id === this.actionPlayer.obj._id
+    ) {
       if (this.map[y][x].name === "Player") {
         const totalDamage = this.calcTotalDamage(this.actionPlayer.obj);
         this.map[y][x].obj.stat.health =
@@ -102,6 +110,7 @@ export default class Game {
         this.map[y][x] = this.actionPlayer;
       }
       this.resetDistance();
+      this.changeTurn();
     } else if (this.map[y][x].name === "Player") {
       // Click on Player
       this.resetDistance();
@@ -177,6 +186,13 @@ export default class Game {
       for (let x = 0; x < this.width; x++) {
         this.map[y][x].view_distance = null;
       }
+    }
+  }
+
+  changeTurn() {
+    this.players.splice(this.players.length, 0, this.players.splice(0, 1)[0]);
+    if (this.players[0].dead) {
+      this.changeTurn();
     }
   }
 }
