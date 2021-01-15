@@ -101,28 +101,76 @@
 <script>
 import { generateMap } from "../game/lib/index";
 import { items } from "../game/data/items";
+import axios from "axios";
 
 export default {
   name: "Room",
+  beforeMount() {
+    this.generateNewMap();
+    this.onChangeGamename(this.gamename);
+  },
   data() {
     return {
       game: { name: "", code: "666" },
       gamename: "",
       width: 20,
       height: 20,
+<<<<<<< HEAD
       players: ["toto_1", "toto_2", "toto_3"],
+=======
+      players: [],
+      owner: null,
+>>>>>>> 55f7a72 (feat(app): start add request for created game to mongoDB)
       numObstacle: 40,
       numItems: 6,
       info: null,
       status: "normal",
       error: null,
       infoClipboard: "",
-      generateNewMapCount: 0
+      generateNewMapCount: 0,
+      user: {
+        username: null,
+        pass_id: null
+      }
     };
   },
-  beforeMount() {
-    this.generateNewMap();
-    this.onChangeGamename(this.gamename);
+  async created() {
+    let user = await this.$db.user.get({ _id: 0 });
+    if (user !== undefined) {
+      this.user = user;
+      this.owner = user.pass_id;
+    }
+    // POST request using axios with error handling
+    const game = {
+      _id: this.game._id,
+      name: this.game.name,
+      code: this.game.code,
+      map: this.game.map,
+      players: [{name: this.user.username, _id: this.user.pass_id}],
+      owner: this.user.pass_id,
+      width: this.width,
+      height: this.height
+    };
+    axios
+      .post("http://localhost:8000/", game)
+      .then((response) => {
+        console.log(response);
+        })
+      .catch((error) => {
+        console.error("There was an error!", error);
+      });
+    setInterval(() => {
+      axios
+        .get(`http://localhost:8000/`)
+        .then((response) => {
+          // JSON responses are automatically parsed.
+          //this.players = response.data.players;
+          console.log(response);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    }, 3000);
   },
   watch: {
     gamename(v) {
