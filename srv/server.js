@@ -32,6 +32,14 @@ db.mongoose
     process.exit();
   });
 
+//routes
+//require("./app/routes/action.routes")(app);
+//require("./app/routes/game.routes")(app);
+//require("./app/routes/item.routes")(app);
+//require("./app/routes/player.routes")(app);
+require("./app/routes/user.routes")(app);
+
+
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "dino-game.tech 's API" });

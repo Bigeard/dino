@@ -7,10 +7,10 @@ module.exports = app => {
     router.post("/", user.create);
 
     // Retrieve all users
-    router.get("/", user.findAll);
+    //router.get("/", user.findAll);
 
     // Retrieve a single user with id
-    router.get("/:id", user.findOne);
+    //router.get("/:id", user.findOne);
 
     app.use("/api/user", router);
 };
