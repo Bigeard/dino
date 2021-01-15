@@ -21,7 +21,7 @@
         </gb-button>
         <gb-button
           :disabled="!user.pass_id"
-          @click="$router.push('/game')"
+          @click="$router.push('/allgame')"
           right-icon="search"
         >
           My Games
@@ -59,10 +59,10 @@
 export default {
   name: "Home",
   async beforeMount() {
-    let user = await this.$db.user.get({ _id: 0 });
+    let user = await this.$db.user.get({ id: 0 });
     if (user === undefined) {
       user = {
-        _id: 0,
+        id: 0,
         username: "",
         pass_id: null,
         updated_at: new Date()
@@ -91,7 +91,7 @@ export default {
   watch: {
     code_game(v) {
       if (v.length > 8) {
-        this.$router.push("/game");
+        this.$router.push("/room/" + v);
       }
     },
     username(v) {

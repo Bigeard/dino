@@ -6,12 +6,32 @@
             "statusCode": 200
         },
         {
+            "route": "/game/*",
+            "serve": "/index.html",
+            "statusCode": 200
+        },
+        {
+            "route": "/room",
+            "serve": "/index.html",
+            "statusCode": 200
+        },
+        {
+            "route": "/room/*",
+            "serve": "/index.html",
+            "statusCode": 200
+        },
+        {
+            "route": "/allgame",
+            "serve": "/index.html",
+            "statusCode": 200
+        },
+        {
             "route": "/about",
             "serve": "/index.html",
             "statusCode": 200
         },
         {
-            "route": "/game",
+            "route": "/error",
             "serve": "/index.html",
             "statusCode": 200
         }

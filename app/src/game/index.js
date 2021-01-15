@@ -1,31 +1,64 @@
 import { items } from "./data/items";
 
 export default class Game {
-  name = "Fun Game !";
+  name = "";
   map = [];
   actionPlayer = null;
   select = null;
   items = items;
   players = [];
+  user = null;
   width = 20;
   height = 20;
   closeDialogWin = false;
   closeDialogInfo = false;
 
-  constructor(db, code) {
+  constructor(vue) {
     console.log("Start Game !");
-    this.loadGame(db, code);
+    this.loadGame(vue);
+    this.centerToUserPlayer(vue);
   }
 
-  async loadGame(db, code) {
-    const { name, map, players, width, height } = await db.get({
-      code: code
+  /**
+   * The function allows to load the game by searching in IndexedDB
+   * @param {*} vue Vue component
+   */
+  async loadGame(vue) {
+    const game = await vue.$db.game.get({
+      code: vue.$route.params.code
     });
-    this.name = name;
-    this.map = map;
-    this.players = players;
-    this.width = width;
-    this.height = height;
+    if (game) {
+      this.name = game.name;
+      this.map = game.map;
+      this.players = game.players;
+      this.width = game.width;
+      this.height = game.height;
+    } else {
+      vue.$router.push("/error");
+    }
+  }
+
+  /**
+   * The function center the window to player
+   * @param {*} vue Vue component
+   */
+  async centerToUserPlayer(vue) {
+    this.user = await vue.$db.user.get({ id: 0 });
+    for (let y = 0; y < this.map.length; y++) {
+      for (let x = 0; x < this.map.length; x++) {
+        if (
+          this.map[y][x].obj &&
+          this.map[y][x].obj.name === this.user.username
+        ) {
+          const nodePlayer = document.querySelector(`[x="${x}"][y="${y}"]`);
+          nodePlayer.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+            inline: "center"
+          });
+        }
+      }
+    }
   }
 
   /**
@@ -38,7 +71,10 @@ export default class Game {
     console.log(`x: ${x} / y: ${y} - ${this.select.name}: `, this.select);
 
     // if the cell is currently in movement / distance selection
-    if (this.map[y][x].view_distance === "Distance") {
+    if (
+      this.map[y][x].view_distance === "Distance" &&
+      this.players[0]._id === this.actionPlayer.obj._id
+    ) {
       if (this.map[y][x].name === "Player") {
         const totalDamage = this.calcTotalDamage(this.actionPlayer.obj);
         this.map[y][x].obj.stat.health =
@@ -102,6 +138,7 @@ export default class Game {
         this.map[y][x] = this.actionPlayer;
       }
       this.resetDistance();
+      this.changeTurn();
     } else if (this.map[y][x].name === "Player") {
       // Click on Player
       this.resetDistance();
@@ -177,6 +214,13 @@ export default class Game {
       for (let x = 0; x < this.width; x++) {
         this.map[y][x].view_distance = null;
       }
+    }
+  }
+
+  changeTurn() {
+    this.players.splice(this.players.length, 0, this.players.splice(0, 1)[0]);
+    if (this.players[0].dead) {
+      this.changeTurn();
     }
   }
 }
