@@ -21,7 +21,7 @@
         </gb-button>
         <gb-button
           :disabled="!user.pass_id"
-          @click="$router.push('/allgame')"
+          @click="$router.push('/allgames')"
           right-icon="search"
         >
           My Games
@@ -43,7 +43,7 @@
             :status="status"
           />
           <gb-button @click="checkUsername" :class="status + '_valid'"
-            >✔️</gb-button
+            >Validate</gb-button
           >
         </div>
         <p v-if="user.pass_id">

@@ -4,6 +4,7 @@ import Home from "../views/Home.vue";
 import Game from "../views/Game.vue";
 import Room from "../views/Room.vue";
 import Page404 from "../views/Page404.vue";
+import AllGames from "../views/AllGames.vue";
 
 Vue.use(VueRouter);
 
@@ -21,6 +22,11 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/About.vue")
+  },
+  {
+    path: "/allgames",
+    name: "AllGames",
+    component: AllGames
   },
   {
     path: "/game/:code",
