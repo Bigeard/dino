@@ -31,6 +31,7 @@
             </ul>
           </div>
           <gb-button :disabled="game.status != 'yourTurn'" class="icon">{{ game.status }}</gb-button>
+          <gb-button @click="$router.push('/game/' + game.code)" class="icon">Voir la partie</gb-button>
         </div>
       </div>
     </div>
