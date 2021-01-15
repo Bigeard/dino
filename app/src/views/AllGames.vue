@@ -18,6 +18,7 @@
           <p>Code : {{ game.code }}</p>
           <p>Created by : {{ game.created_at }}</p>
           <p>Update at : {{ game.update_at }}</p>
+          <p>Status : {{ game.status }}</p>
           <gb-badge>Players : {{ game.players.length }} / 5</gb-badge>
           <div class="player_list">
             <ul class="players">
@@ -30,8 +31,9 @@
               </li>
             </ul>
           </div>
-          <gb-button :disabled="game.status != 'yourTurn'" class="icon">{{ game.status }}</gb-button>
-          <gb-button @click="$router.push('/game/' + game.code)" class="icon">See game</gb-button>
+          <gb-button @click="$router.push('/game/' + game.code)" class="icon"
+            >See game</gb-button
+          >
         </div>
       </div>
     </div>
@@ -47,14 +49,14 @@ export default {
   data() {
     return {
       games: []
-    }
+    };
   },
   methods: {
     async findGames() {
       const games = await this.$db.game.toArray();
       return games;
     }
-  },
+  }
 };
 </script>
 <style lang="scss">
