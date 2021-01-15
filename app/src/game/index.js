@@ -7,6 +7,7 @@ export default class Game {
   select = null;
   items = items;
   players = [];
+  user = null;
   width = 20;
   height = 20;
   closeDialogWin = false;
@@ -15,6 +16,7 @@ export default class Game {
   constructor(vue) {
     console.log("Start Game !");
     this.loadGame(vue);
+    this.centerToUserPlayer(vue);
   }
 
   /**
@@ -33,6 +35,29 @@ export default class Game {
       this.height = game.height;
     } else {
       vue.$router.push("/error");
+    }
+  }
+
+  /**
+   * The function center the window to player
+   * @param {*} vue Vue component
+   */
+  async centerToUserPlayer(vue) {
+    this.user = await vue.$db.user.get({ id: 0 });
+    for (let y = 0; y < this.map.length; y++) {
+      for (let x = 0; x < this.map.length; x++) {
+        if (
+          this.map[y][x].obj &&
+          this.map[y][x].obj.name === this.user.username
+        ) {
+          const nodePlayer = document.querySelector(`[x="${x}"][y="${y}"]`);
+          nodePlayer.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+            inline: "center"
+          });
+        }
+      }
     }
   }
 

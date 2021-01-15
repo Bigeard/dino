@@ -7,7 +7,7 @@ export default new VueIdb({
   version: 1,
   database: "dino",
   schemas: [
-    { user: "_id, username, pass_id, updated_at" },
+    { user: "id, _id, username, pass_id, updated_at" },
     {
       game:
         "_id, name, code, map, players, width, height, closeDialogWin, status, created_at, updated_at"
@@ -16,7 +16,7 @@ export default new VueIdb({
   options: {
     user: {
       type: "list",
-      primary: "_id",
+      primary: "id",
       label: "username",
       updated_at: "updated_at"
     },

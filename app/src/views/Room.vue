@@ -106,7 +106,7 @@ export default {
       gamename: "",
       width: 20,
       height: 20,
-      players: ["toto_1", "toto_2", "toto_3", "toto_4"],
+      players: ["toto_1", "toto_2", "toto_3"],
       numObstacle: 40,
       numItems: 6,
       info: null,
@@ -171,7 +171,12 @@ export default {
         this.infoClipboard = "";
       }, 3000);
     },
-    generateNewMap() {
+    async generateNewMap() {
+      const user = await this.$db.user.get({ id: 0 });
+      // @TODO Temporary
+      if (this.players.length === 3) {
+        this.players.unshift(user.username);
+      }
       const { new_map, gen_player } = generateMap(
         this.width,
         this.width,

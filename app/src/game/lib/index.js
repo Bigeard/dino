@@ -34,23 +34,27 @@ const generateMap = (width, height, players, numObstacle, numItems, items) => {
   let data_players = [];
   for (let p = 0; p < players.length; p++) {
     randCell = map[randInt(0, height)][randInt(0, width)];
-    randCell.id = p;
-    randCell.name = "Player";
-    randCell.obstacle = false;
-    randCell.obj = {
-      _id: Date.now().toString() + Math.floor(Math.random() * 100).toString(),
-      name: players[p],
-      img: "/public/img/icons/zorfiL.gif",
-      dead: false,
-      items: [],
-      numPlayer: p,
-      stat: {
-        health: 40,
-        damage: 4,
-        move: 3
-      }
-    };
-    data_players.push(randCell.obj);
+    if (randCell.name === "Ground") {
+      randCell.id = p;
+      randCell.name = "Player";
+      randCell.obstacle = false;
+      randCell.obj = {
+        _id: Date.now().toString() + Math.floor(Math.random() * 100).toString(),
+        name: players[p],
+        img: "/public/img/icons/zorfiL.gif",
+        dead: false,
+        items: [],
+        numPlayer: p,
+        stat: {
+          health: 40,
+          damage: 4,
+          move: 3
+        }
+      };
+      data_players.push(randCell.obj);
+    } else {
+      generateMap(width, height, players, numObstacle, numItems, items);
+    }
   }
   players = data_players;
 
