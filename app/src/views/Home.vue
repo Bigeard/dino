@@ -56,7 +56,7 @@
             :status="status"
           />
           <gb-button @click="checkUsername" :class="status + '_valid'"
-            >✔️</gb-button
+            >Validate</gb-button
           >
         </div>
         <p v-if="user.pass_id">

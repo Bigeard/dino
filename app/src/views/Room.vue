@@ -27,8 +27,12 @@
             :error="error"
             :status="status"
           />
-          <gb-button @click="checkGamename" :class="status + '_valid'">
-            ✔️
+          <gb-button
+            @click="checkGamename"
+            :class="status + '_valid'"
+            right-icon="done"
+          >
+            Validate
           </gb-button>
         </div>
         <gb-badge>Players : {{ players.length }} / 5</gb-badge>
@@ -198,7 +202,7 @@ export default {
         players: this.game.players,
         width: this.width,
         height: this.height,
-        status: 'inProgress'
+        status: "inProgress"
       });
       this.$router.push("/game/" + this.game.code);
     }
