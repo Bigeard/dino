@@ -4,6 +4,16 @@
   </div>
 </template>
 
+<script>
+export default {
+  async beforeMount() {
+    const user = await this.$db.user.get({ id: 0 });
+    if (!user && !user.pass_id && this.$route.path !== "/") {
+      this.$router.push("/");
+    }
+  }
+};
+</script>
 <style lang="scss">
 html,
 body {
