@@ -18,15 +18,15 @@
           <p>Code : {{ game.code }}</p>
           <p>Created by : {{ game.created_at }}</p>
           <p>Update at : {{ game.update_at }}</p>
-          <gb-badge>Players : {{ players.length }} / 5</gb-badge>
+          <gb-badge>Players : {{ game.players.length }} / 5</gb-badge>
           <div class="player_list">
             <ul class="players">
               <li
-                v-for="(player, i) in players"
+                v-for="(player, i) in game.players"
                 :key="i"
                 :class="`Player${i + 1}`"
               >
-                <img src="../../public/img/icons/zorfiL.gif" />{{ player }}
+                <img src="../../public/img/icons/zorfiL.gif" />{{ player.name }}
               </li>
             </ul>
           </div>
@@ -40,43 +40,20 @@
 /* eslint-disable */
 export default {
   name: "AllGames",
+  async beforeMount() {
+    this.games = await this.$db.game.toArray();
+  },
   data() {
     return {
-      games: [{
-        id: 1,
-        code: 12345,
-        created_at: "01/01/2021",
-        update_at: "08/01/2021",
-        status: "winner",
-        name: "Game 1"
-      },
-      {
-        id: 2,
-        code: 123,
-        created_at: "02/01/2021",
-        update_at: "07/01/2021",
-        status: "looser",
-        name: "Game 2"
-      },
-      {
-        id: 3,
-        code: 1235,
-        created_at: "04/01/2021",
-        update_at: "05/01/2021",
-        status: "inProgress",
-        name: "Game 3"
-      },
-      {
-        id: 4,
-        code: 132,
-        created_at: "02/01/2021",
-        update_at: "07/01/2021",
-        status: "yourTurn",
-        name: "Game 4"
-      }],
-      players: ["toto_1", "toto_2", "toto_3", "toto_4"],
+      games: []
     }
-  }
+  },
+  methods: {
+    async findGames() {
+      const games = await this.$db.game.toArray();
+      return games;
+    }
+  },
 };
 </script>
 <style lang="scss">

@@ -192,7 +192,8 @@ export default {
         map: this.game.map,
         players: this.game.players,
         width: this.width,
-        height: this.height
+        height: this.height,
+        status: 'inProgress'
       });
       this.$router.push("/game/" + this.game.code);
     }
