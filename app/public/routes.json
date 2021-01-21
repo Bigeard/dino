@@ -1,0 +1,39 @@
+{
+    "routes": [
+        {
+            "route": "/",
+            "serve": "/index.html",
+            "statusCode": 200
+        },
+        {
+            "route": "/game/*",
+            "serve": "/index.html",
+            "statusCode": 200
+        },
+        {
+            "route": "/room",
+            "serve": "/index.html",
+            "statusCode": 200
+        },
+        {
+            "route": "/room/*",
+            "serve": "/index.html",
+            "statusCode": 200
+        },
+        {
+            "route": "/allgames",
+            "serve": "/index.html",
+            "statusCode": 200
+        },
+        {
+            "route": "/about",
+            "serve": "/index.html",
+            "statusCode": 200
+        },
+        {
+            "route": "/error",
+            "serve": "/index.html",
+            "statusCode": 200
+        }
+    ]
+}
