@@ -25,6 +25,7 @@ jobs:
         npm install
         npm run build --if-present
         npm run test --if-present
+      working-directory: 'srv'
 
     - name: 'Deploy to Azure Web App'
       uses: azure/webapps-deploy@v2
@@ -32,4 +33,4 @@ jobs:
         app-name: 'dino-srv'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_90114a0c8268467b81b6e9459068fb4e }}
-        package: .
+        package: 'srv'
