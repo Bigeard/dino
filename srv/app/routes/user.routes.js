@@ -16,7 +16,7 @@ module.exports = app => {
     router.get("/readByPassId/:passId", user.findByPassId);
 
     // Update a user with id
-    router.post("/update/", user.update)
+    router.patch("/update/", user.update)
 
     app.use("/api/user", router);
 };
