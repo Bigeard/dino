@@ -112,7 +112,12 @@ export default {
         name: "",
         code: "",
         width: 20,
-        height: 20
+        height: 20,
+        players: ["toto_1", "toto_2", "toto_3"],
+        numObstacle: 40,
+        numItems: 6,
+        status: "normal",
+        generateNewMapCount: 0
       }
     };
   },
@@ -199,17 +204,17 @@ export default {
     async creatNewGame() {
       const user = await this.$db.user.get({ id: 0 });
       const { new_map, gen_player } = generateMap(
-        this.width,
-        this.width,
-        this.players,
-        this.numObstacle,
-        this.numItems,
+        this.game.height,
+        this.game.width,
+        this.game.players,
+        this.game.numObstacle,
+        this.game.numItems,
         items
       );
-      this.players.unshift(user.username);
+      this.game.players.unshift(user.username);
       this.game.map = new_map;
       this.game.players = gen_player;
-      this.generateNewMapCount++;
+      this.game.generateNewMapCount++;
 
       const game = {
         name: this.game.name,
@@ -217,13 +222,18 @@ export default {
         map: this.game.map,
         players: [{ name: this.user.username, _id: this.user.pass_id }],
         owner: this.user.pass_id,
-        width: this.width,
-        height: this.height
+        status: this.game.status,
+        created_at: "",
+        updated_at: ""
       };
       axios
         .post("http://localhost:8000/", game)
         .then((response) => {
           console.log(response);
+          // Pour l'instant, le this.game.code est vide car je dois le récupérer grace au back.
+          // Est ce que je peux faire une requet Get dans la réponse de cette requet Post ?
+          // Pour pouvoir récupérer le this.game.code et ainsi changer l'url avec une bonne url.
+          this.$router.push("/room/" + this.game.code);
         })
         .catch((error) => {
           console.error("There was an error!", error);
