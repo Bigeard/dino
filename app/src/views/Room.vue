@@ -104,6 +104,7 @@ import axios from "axios";
 export default {
   name: "Room",
   beforeMount() {
+    this.getGame();
     this.generateNewMap();
     this.onChangeGamename(this.gamename);
   },
@@ -129,37 +130,13 @@ export default {
     };
   },
   async created() {
-    let user = await this.$db.user.get({ _id: 0 });
-    if (user !== undefined) {
-      this.user = user;
-      this.owner = user.pass_id;
-    }
-    // POST request using axios with error handling
-    const game = {
-      _id: this.game._id,
-      name: this.game.name,
-      code: this.game.code,
-      map: this.game.map,
-      players: [{ name: this.user.username, _id: this.user.pass_id }],
-      owner: this.user.pass_id,
-      width: this.width,
-      height: this.height
-    };
-    axios
-      .post("http://localhost:8000/", game)
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.error("There was an error!", error);
-      });
     setInterval(() => {
       axios
-        .get(`http://localhost:8000/`)
+        .get(`http://localhost:8000/game`)
         .then((response) => {
           // JSON responses are automatically parsed.
-          //this.players = response.data.players;
           console.log(response);
+          //this.players = response.data.players;
         })
         .catch((e) => {
           console.error(e);
@@ -216,6 +193,19 @@ export default {
       setTimeout(() => {
         this.infoClipboard = "";
       }, 3000);
+    },
+    getGame() {
+      axios
+        .get(`http://localhost:8000/game`)
+        .then((response) => {
+          // JSON responses are automatically parsed.
+          console.log(response);
+          //this.game.code = response.data.code;
+          //this.players = response.data.players;
+        })
+        .catch((e) => {
+          console.error(e);
+        });
     },
     async generateNewMap() {
       const user = await this.$db.user.get({ id: 0 });
