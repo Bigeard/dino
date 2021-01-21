@@ -30,7 +30,7 @@
         />
         <gb-button
           :disabled="!user.pass_id"
-          @click="$router.push('/room')"
+          @click="creatNewGame()"
           right-icon="add"
         >
           New Game
@@ -72,6 +72,8 @@
 </template>
 
 <script>
+import { generateMap } from "../game/lib/index";
+import { items } from "../game/data/items";
 import axios from "axios";
 
 export default {
@@ -105,7 +107,13 @@ export default {
         username: null,
         pass_id: null
       },
-      deferredPrompt: null
+      deferredPrompt: null,
+      game: {
+        name: "",
+        code: "",
+        width: 20,
+        height: 20
+      }
     };
   },
   watch: {
@@ -187,6 +195,39 @@ export default {
         document.getElementById("btn-download").classList.add("done");
       }, 1000);
       this.deferredPrompt.prompt();
+    },
+    async creatNewGame() {
+      const user = await this.$db.user.get({ id: 0 });
+      const { new_map, gen_player } = generateMap(
+        this.width,
+        this.width,
+        this.players,
+        this.numObstacle,
+        this.numItems,
+        items
+      );
+      this.players.unshift(user.username);
+      this.game.map = new_map;
+      this.game.players = gen_player;
+      this.generateNewMapCount++;
+
+      const game = {
+        name: this.game.name,
+        code: this.game.code,
+        map: this.game.map,
+        players: [{ name: this.user.username, _id: this.user.pass_id }],
+        owner: this.user.pass_id,
+        width: this.width,
+        height: this.height
+      };
+      axios
+        .post("http://localhost:8000/", game)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.error("There was an error!", error);
+        });
     }
   }
 };

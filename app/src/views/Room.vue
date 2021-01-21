@@ -62,14 +62,12 @@
               <td
                 v-for="(cell, x) in row"
                 :key="x"
-                :class="
-                  `cell 
+                :class="`cell 
               ${cell.id + 1 ? cell.name + (cell.id + 1) : cell.name}
               ${cell.obj ? 'obj' : ''}
               ${cell.view_distance ? ' ' + cell.view_distance : ''}
               ${cell.name === 'Player' ? 'Player' : ''}
-              `
-                "
+              `"
               ></td>
             </tr>
           </table>
@@ -115,12 +113,8 @@ export default {
       gamename: "",
       width: 20,
       height: 20,
-<<<<<<< HEAD
-      players: ["toto_1", "toto_2", "toto_3"],
-=======
       players: [],
       owner: null,
->>>>>>> 55f7a72 (feat(app): start add request for created game to mongoDB)
       numObstacle: 40,
       numItems: 6,
       info: null,
@@ -146,7 +140,7 @@ export default {
       name: this.game.name,
       code: this.game.code,
       map: this.game.map,
-      players: [{name: this.user.username, _id: this.user.pass_id}],
+      players: [{ name: this.user.username, _id: this.user.pass_id }],
       owner: this.user.pass_id,
       width: this.width,
       height: this.height
@@ -155,7 +149,7 @@ export default {
       .post("http://localhost:8000/", game)
       .then((response) => {
         console.log(response);
-        })
+      })
       .catch((error) => {
         console.error("There was an error!", error);
       });
@@ -214,7 +208,7 @@ export default {
         () => {
           this.infoClipboard = "Copying to clipboard was successful!";
         },
-        err => {
+        (err) => {
           this.infoClipboard = "Could not copy text... " + err;
           console.error("Async: Could not copy text: ", err);
         }
