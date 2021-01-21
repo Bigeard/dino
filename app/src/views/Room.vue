@@ -193,7 +193,7 @@ export default {
         players: this.game.players,
         width: this.width,
         height: this.height,
-        status: 'inProgress'
+        status: 'in_progress'
       });
       this.$router.push("/game/" + this.game.code);
     }

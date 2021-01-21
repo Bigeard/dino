@@ -14,6 +14,7 @@
           v-for="game in games"
           :key="game.id"
         >
+          <gb-badge>State : {{ splitState(game.status) }}</gb-badge>
           <p>Name : {{ game.name }}</p>
           <p>Code : {{ game.code }}</p>
           <p>Created by : {{ game.created_at }}</p>
@@ -30,7 +31,6 @@
               </li>
             </ul>
           </div>
-          <gb-button :disabled="game.status != 'yourTurn'" class="icon">{{ game.status }}</gb-button>
           <gb-button @click="$router.push('/game/' + game.code)" class="icon">See game</gb-button>
         </div>
       </div>
@@ -53,6 +53,9 @@ export default {
     async findGames() {
       const games = await this.$db.game.toArray();
       return games;
+    },
+    splitState(status){
+      return status.replace('_', ' ');
     }
   },
 };
@@ -86,15 +89,15 @@ export default {
     text-align: center;
   }
 
-  .winner {
+  .win {
     background-color: rgb(24, 133, 24);
   }
 
-  .looser {
+  .loose {
     background-color: #ac3333;
   }
 
-  .inProgress {
+  .in_progress, .your_turn{
     background-color: #3f536e;
   }
 
