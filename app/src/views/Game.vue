@@ -15,7 +15,7 @@
           @click="infoGame()"
           right-icon="info"
         />
-        <gb-button class="icon" @click="reloadGame()" right-icon="refresh" />
+        <gb-button class="icon" @click="refreshGame()" right-icon="refresh" />
       </div>
     </div>
     <div id="game">
@@ -127,11 +127,10 @@ export default {
   },
   methods: {
     infoGame() {
-      console.log(this.players);
       this.closeDialogInfo = this.closeDialogInfo ? false : true;
     },
-    reloadGame() {
-      window.location.reload(true);
+    refreshGame() {
+      this._data.loadGame(this);
     },
     closeInfo() {
       this.select = null;
@@ -143,7 +142,7 @@ export default {
     action(e) {
       const x = Number(e.target.attributes.x.value);
       const y = Number(e.target.attributes.y.value);
-      this._data.actionGame(x, y, e);
+      this._data.actionGame(this, x, y, e);
     }
   }
 };

@@ -39,11 +39,12 @@ db.mongoose
   });
 
 //routes
-//require("./app/routes/action.routes")(app);
+require("./app/routes/user.routes")(app);
 require("./app/routes/game.routes")(app);
+
+//require("./app/routes/action.routes")(app);
 //require("./app/routes/item.routes")(app);
 //require("./app/routes/player.routes")(app);
-require("./app/routes/user.routes")(app);
 
 
 // simple route

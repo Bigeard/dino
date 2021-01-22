@@ -104,7 +104,6 @@
             @click="startGame()"
             right-icon="arrow_forward"
           >
-            {{ game.players.length }}
             {{
               user._id !== game.owner ? "Wait owner start..." : "Strart Game"
             }}
@@ -198,7 +197,7 @@ export default {
           new_name: this.game.name
         };
         axios
-          .post("http://localhost:8000/api/game/update", update)
+          .post("https://dino-srv.azurewebsites.net/api/game/update", update)
           .then(response => {
             // JSON responses are automatically parsed.
             this.game.code = response.data.code;
@@ -237,10 +236,9 @@ export default {
         code: this.$route.params.code
       };
       axios
-        .post("http://localhost:8000/api/game/update", update)
+        .post("https://dino-srv.azurewebsites.net/api/game/update", update)
         .then(response => {
           this.game.code = response.data.code;
-          console.log(response.data.status);
           if (response.data.status === "in_progress") {
             this.$router.push("/game/" + this.game.code);
           }
@@ -263,7 +261,7 @@ export default {
         genNewMap: true
       };
       axios
-        .post("http://localhost:8000/api/game/update", update)
+        .post("https://dino-srv.azurewebsites.net/api/game/update", update)
         .then(response => {
           // JSON responses are automatically parsed.
           this.game.code = response.data.code;
@@ -285,7 +283,7 @@ export default {
         start: true
       };
       axios
-        .post("http://localhost:8000/api/game/update", update)
+        .post("https://dino-srv.azurewebsites.net/api/game/update", update)
         .then(() => {
           this.$router.push("/game/" + this.game.code);
         })
