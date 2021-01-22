@@ -84,7 +84,6 @@ export default {
       username: null,
       info: null,
       error: null,
-      network_error: null,
       status: "normal",
       user: {
         username: null,
