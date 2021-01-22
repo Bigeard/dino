@@ -5,6 +5,7 @@
         >Dino <img src="../assets/game/zorfiL.gif" alt="Dino"
       /></gb-heading>
       <!-- Download button -->
+      <gb-heading tag="h5">Install app :</gb-heading>
       <div v-if="deferredPrompt">
         <div @click="install"  v-if="deferredPrompt" class="btn-circle-download" id="btn-download">
           <svg id="arrow" width="14px" height="20px" viewBox="17 14 14 20">
