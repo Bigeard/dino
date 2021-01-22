@@ -84,6 +84,7 @@ export default {
       username: null,
       info: null,
       error: null,
+      network_error: null,
       status: "normal",
       user: {
         username: null,
@@ -129,22 +130,25 @@ export default {
     async checkUsername() {
       if (this.status === "normal") {
         let user = await this.$db.user.get({ id: 0 });
+        var self = this;
         if (!user.pass_id) {
           await axios.post("http://localhost:8000/api/user/create", {
             "username": this.username
-          }).then(function(response) {
+          }).then((response) => {
             user.username = response.data.username;
             user.pass_id = response.data.passId;
-          }).catch(function(error) {
-            console.log(error);
+          }).catch(() => {
+            self.status = "error";
+            self.error = "Impossible de se connecter au serveur";
           });
         } else {
           user.username = this.username;
           await axios.patch("http://localhost:8000/api/user/update", {
             "username": this.username,
             "passId": user.pass_id
-          }).catch(function(error) {
-            console.log(error);
+          }).catch(() => {
+            self.status = "error";
+            self.error = "Impossible de se connecter au serveur";
           });
         }
         await this.$db.user.update(0, user);
