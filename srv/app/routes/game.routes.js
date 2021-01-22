@@ -15,5 +15,8 @@ module.exports = app => {
     // Retrieve a single game with id
     //router.get("/:id", game.findOne);
 
+    // Retrieve a single game with code
+    router.get("/readByCode/:code", game.findByCode);
+
     app.use("/api/game", router);
 };

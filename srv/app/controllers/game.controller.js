@@ -27,3 +27,17 @@ exports.create = (req, res) => {
       })
     );
 };
+
+// Find a single Game with a code
+exports.findByCode = (req, res, sendData) => {
+  const code = req.params.code;
+  // No validation because it's a GET request
+  Game.findOne({ code: code }, "-code")
+    .then((data) => {
+      if (!data) res.status(404).send({ message: "Not found game..." });
+      else return sendData ? res.send(data) : data;
+    })
+    .catch((_) => {
+      res.status(500).send({ message: "Error server..." });
+    });
+};
