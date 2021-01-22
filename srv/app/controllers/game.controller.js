@@ -4,18 +4,16 @@ const Game = db.game;
 
 // Create and Save a new Game
 exports.create = (req, res) => {
-
   // Create a Game
   const game = new Game({
-      name: req.body.name,
-      code: uuidv4(),
-      map: req.body.map,
-      actions: req.body.actions,
-      players: req.body.players,
-      owner: req.body.owner,
-      status: req.body.status
+    name: req.body.name,
+    code: uuidv4(),
+    map: req.body.map,
+    actions: req.body.actions,
+    players: req.body.players,
+    owner: req.body.owner,
+    status: req.body.status,
   });
-  console.log(game);
 
   // Save Game in the database
   game
@@ -39,5 +37,48 @@ exports.findByCode = (req, res, sendData) => {
     })
     .catch((_) => {
       res.status(500).send({ message: "Error server..." });
+    });
+};
+
+// Update a User id in the request
+exports.update = (req, res) => {
+  // Validate request
+  const name = req.body.name;
+  const code = req.body.code;
+  const map = req.body.map;
+  const actions = req.body.actions;
+  const players = req.body.players;
+  const owner = req.body.owner;
+  const status = req.body.status;
+
+  if (!name || !code || !map || !actions || !players || !owner || !status) {
+    return res.status(400).send({
+      message: "Data is incomplete!",
+    });
+  }
+
+  Game.findOneAndUpdate(
+    { code: code },
+    {
+      name: name,
+      code: code,
+      map: map,
+      actions: actions,
+      players: players,
+      owner: owner,
+      status: status,
+    }
+  )
+    .then((data) => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot update Game. Maybe Game was not found!`,
+        });
+      } else res.send({ message: "Game was updated successfully." });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: "Error updating Game",
+      });
     });
 };
