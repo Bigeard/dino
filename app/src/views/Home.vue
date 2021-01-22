@@ -138,7 +138,7 @@ export default {
             user.pass_id = response.data.passId;
           }).catch(() => {
             self.status = "error";
-            self.error = "Impossible de se connecter au serveur";
+            self.error = "Cannot connect to the server";
           });
         } else {
           user.username = this.username;
@@ -147,7 +147,7 @@ export default {
             "passId": user.pass_id
           }).catch(() => {
             self.status = "error";
-            self.error = "Impossible de se connecter au serveur";
+            self.error = "Cannot connect to the server";
           });
         }
         await this.$db.user.update(0, user);
