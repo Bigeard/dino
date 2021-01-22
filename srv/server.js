@@ -6,6 +6,12 @@ const app = express();
 
 const PORT = process.env.PORT || 8000;
 
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 var corsOptions = {
   origin: ["http://localhost:${PORT}"]
 };
@@ -31,6 +37,14 @@ db.mongoose
     console.log("Cannot connect to the database!", err);
     process.exit();
   });
+
+//routes
+//require("./app/routes/action.routes")(app);
+//require("./app/routes/game.routes")(app);
+//require("./app/routes/item.routes")(app);
+//require("./app/routes/player.routes")(app);
+require("./app/routes/user.routes")(app);
+
 
 // simple route
 app.get("/", (req, res) => {
