@@ -5,18 +5,20 @@
         >Dino <img src="../assets/game/zorfiL.gif" alt="Dino"
       /></gb-heading>
       <!-- Download button -->
-      <div @click="downloadBtn()"  class="btn-circle-download" id="btn-download">
-  <svg id="arrow" width="14px" height="20px" viewBox="17 14 14 20">
-    <path d="M24,15 L24,32"></path>
-    <polyline points="30 27 24 33 18 27"></polyline>
-  </svg>
-  <svg id="check" width="21px" height="15px" viewBox="13 17 21 15">
-    <polyline points="32.5 18.5 20 31 14.5 25.5"></polyline>
-  </svg>
-  <svg  id="border" width="48px" height="48px" viewBox="0 0 48 48">
-    <path d="M24,1 L24,1 L24,1 C36.7025492,1 47,11.2974508 47,24 L47,24 L47,24 C47,36.7025492 36.7025492,47 24,47 L24,47 L24,47 C11.2974508,47 1,36.7025492 1,24 L1,24 L1,24 C1,11.2974508 11.2974508,1 24,1 L24,1 Z"></path>
-  </svg>
-</div>
+      <div v-if="deferredPrompt">
+        <div @click="install"  v-if="deferredPrompt" class="btn-circle-download" id="btn-download">
+          <svg id="arrow" width="14px" height="20px" viewBox="17 14 14 20">
+            <path d="M24,15 L24,32"></path>
+            <polyline points="30 27 24 33 18 27"></polyline>
+          </svg>
+          <svg id="check" width="21px" height="15px" viewBox="13 17 21 15">
+            <polyline points="32.5 18.5 20 31 14.5 25.5"></polyline>
+          </svg>
+          <svg  id="border" width="48px" height="48px" viewBox="0 0 48 48">
+            <path d="M24,1 L24,1 L24,1 C36.7025492,1 47,11.2974508 47,24 L47,24 L47,24 C47,36.7025492 36.7025492,47 24,47 L24,47 L24,47 C11.2974508,47 1,36.7025492 1,24 L1,24 L1,24 C1,11.2974508 11.2974508,1 24,1 L24,1 Z"></path>
+          </svg>
+        </div>
+      </div>
       <!-- Navigation -->
       <div class="nav">
         <gb-input
@@ -98,7 +100,8 @@ export default {
       user: {
         username: null,
         pass_id: null
-      }
+      },
+      deferredPrompt: null
     };
   },
   watch: {
@@ -110,6 +113,16 @@ export default {
     username(v) {
       this.onChangeUsername(v);
     }
+  },
+  created() {
+    window.addEventListener("beforeinstallprompt", e => {
+      e.preventDefault();
+      // Stash the event so it can be triggered later.
+      this.deferredPrompt = e;
+    });
+    window.addEventListener("appinstalled", () => {
+      this.deferredPrompt = null;
+    });
   },
   methods: {
     onChangeUsername(v) {
@@ -147,15 +160,12 @@ export default {
         this.user = user;
       }
     },
-    downloadBtn() {
+    async install() {
       document.getElementById("btn-download").classList.add("load");
       setTimeout(function () {
         document.getElementById("btn-download").classList.add("done");
       }, 1000);
-      setTimeout(function () {
-        document.getElementById("btn-download").classList.remove("load");
-        document.getElementById("btn-download").classList.remove("done");
-      }, 5000);
+      this.deferredPrompt.prompt();
     }
   }
 };
