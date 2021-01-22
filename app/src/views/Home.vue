@@ -71,15 +71,6 @@ export default {
       };
       await this.$db.user.add(user);
       // eslint-disable-next-line no-empty
-    } else {
-      axios.get("http://localhost:8000/api/user/readByPassId/" + this.$db.pass_id)
-        .then(function(response) {
-          user = response;
-          //modifier dans idb
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
     }
     this.onChangeUsername(user.username);
     if (this.status === "normal") {
@@ -137,14 +128,28 @@ export default {
     },
     async checkUsername() {
       if (this.status === "normal") {
-        let user;
-        axios.post("http://localhost:8000/api/user/create", {
-          "username": this.username
-        }).then(function(response) {
-          user = response;
-        }).catch(function(error) {
-          console.log(error);
-        });
+        let user = await this.$db.user.get({ id: 0 });
+        var self = this;
+        if (!user.pass_id) {
+          await axios.post("http://localhost:8000/api/user/create", {
+            "username": this.username
+          }).then((response) => {
+            user.username = response.data.username;
+            user.pass_id = response.data.passId;
+          }).catch(() => {
+            self.status = "error";
+            self.error = "Cannot connect to the server";
+          });
+        } else {
+          user.username = this.username;
+          await axios.patch("http://localhost:8000/api/user/update", {
+            "username": this.username,
+            "passId": user.pass_id
+          }).catch(() => {
+            self.status = "error";
+            self.error = "Cannot connect to the server";
+          });
+        }
         await this.$db.user.update(0, user);
         this.user = user;
       }
