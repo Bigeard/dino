@@ -2,7 +2,7 @@
   <div class="home">
     <div class="content">
       <gb-heading tag="h1" class="logo"
-        >Dino <img src="../assets/game/zorfiL.gif" alt="Dino"
+      >Dino <img src="../assets/game/zorfiL.gif" alt="Dino"
       /></gb-heading>
       <!-- Navigation -->
       <div class="nav">
@@ -42,9 +42,9 @@
             :error="error"
             :status="status"
           />
-          <gb-button @click="checkUsername" :class="status + '_valid'"
-            >Validate</gb-button
-          >
+          <gb-button @click="checkUsername" :class="status + '_valid'">
+            Validate
+          </gb-button>
         </div>
         <p v-if="user.pass_id">
           Pass ID :
@@ -56,6 +56,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "Home",
   async beforeMount() {
@@ -68,6 +70,16 @@ export default {
         updated_at: new Date()
       };
       await this.$db.user.add(user);
+      // eslint-disable-next-line no-empty
+    } else {
+      axios.get("http://localhost:8000/api/user/readByPassId/" + this.$db.pass_id)
+        .then(function(response) {
+          user = response;
+          //modifier dans idb
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     }
     this.onChangeUsername(user.username);
     if (this.status === "normal") {
@@ -114,7 +126,7 @@ export default {
         this.info = null;
       } else if (!/^[\w.]*$/.test(v)) {
         this.error =
-          'you can only use the following characters: "A-z" "0-9" "_"';
+          "you can only use the following characters: \"A-z\" \"0-9\" \"_\"";
         this.status = "error";
         this.info = null;
       } else {
@@ -125,11 +137,14 @@ export default {
     },
     async checkUsername() {
       if (this.status === "normal") {
-        const user = {
-          _id: 0,
-          username: this.username,
-          pass_id: "EUYahAs3u77YP9Bb"
-        };
+        let user;
+        axios.post("http://localhost:8000/api/user/create", {
+          "username": this.username
+        }).then(function(response) {
+          user = response;
+        }).catch(function(error) {
+          console.log(error);
+        });
         await this.$db.user.update(0, user);
         this.user = user;
       }
@@ -173,10 +188,12 @@ export default {
     display: flex;
     align-items: flex-end;
     margin-bottom: 30px;
+
     .gb-field-input {
       width: 100%;
       margin-right: 10px;
     }
+
     .gb-base-button {
       height: 42px;
     }

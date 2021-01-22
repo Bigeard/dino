@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@growthbunker/vuedarkmode": "^0.5.56",
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "register-service-worker": "^1.7.1",
     "vue": "^2.6.11",
