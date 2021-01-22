@@ -71,15 +71,6 @@ export default {
       };
       await this.$db.user.add(user);
       // eslint-disable-next-line no-empty
-    } else {
-      await axios.get("http://localhost:8000/api/user/readByPassId/" + user.pass_id)
-        .then(function(response) {
-          user.username = response.data.username;
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-      await this.$db.user.update(0, user);
     }
     this.onChangeUsername(user.username);
     if (this.status === "normal") {
