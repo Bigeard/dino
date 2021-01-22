@@ -109,8 +109,8 @@ export default {
       },
       deferredPrompt: null,
       game: {
-        name: "",
-        code: "",
+        name: null,
+        code: null,
         width: 20,
         height: 20,
         players: ["toto_1", "toto_2", "toto_3"],
