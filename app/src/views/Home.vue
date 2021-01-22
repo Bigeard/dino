@@ -227,7 +227,7 @@ export default {
         updated_at: ""
       };
       axios
-        .post("http://localhost:8000/game", game)
+        .post("http://localhost:8000/api/game/create", game)
         .then(response => {
           console.log(response);
           // Pour l'instant, le this.game.code est vide car je dois le récupérer grace au back.

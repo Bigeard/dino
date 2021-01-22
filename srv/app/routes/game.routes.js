@@ -4,7 +4,7 @@ module.exports = app => {
     var router = require("express").Router();
 
     // Create a new game
-    router.post("/", game.create);
+    router.post("/create", game.create);
 
     // Retrieve all games
     router.get("/", game.findAll);
