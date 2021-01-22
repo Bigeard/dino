@@ -125,7 +125,7 @@ export default {
   },
   watch: {
     code_game(v) {
-      if (v.length > 8) {
+      if (v.length > 35) {
         this.$router.push("/room/" + v);
       }
     },
