@@ -2,32 +2,22 @@ const { v4: uuidv4 } = require("uuid");
 const db = require("../models");
 const Game = db.game;
 
-// Create and Save a new User
+// Create and Save a new Game
 exports.create = (req, res) => {
-  // Validate request
-  //const username = req.body.username;
-  console.log(req.body);
-  //   if (
-  //     !username ||
-  //     username.length < 3 ||
-  //     username.length > 13 ||
-  //     !/^[\w.]*$/.test(username)
-  //   ) {
-  //     res.status(400).send({ message: "Wrong username format!" });
-  //     return;
-  //   }
-  /*
-  // Create a User
+
+  // Create a Game
   const game = new Game({
-      name: req.body.username,
+      name: req.body.name,
       code: uuidv4(),
       map: req.body.map,
       actions: req.body.actions,
       players: req.body.players,
+      owner: req.body.owner,
       status: req.body.status
   });
+  console.log(game);
 
-  // Save User in the database
+  // Save Game in the database
   game
     .save(game)
     .then((data) => res.send(data))
@@ -36,5 +26,4 @@ exports.create = (req, res) => {
         message: err.message || "Some error occurred while creating the Game.",
       })
     );
-*/
 };

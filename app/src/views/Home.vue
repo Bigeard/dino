@@ -109,11 +109,13 @@ export default {
       },
       deferredPrompt: null,
       game: {
-        name: null,
-        code: null,
+        name: "666",
+        code: "666",
         width: 20,
         height: 20,
+        actions: [],
         players: ["toto_1", "toto_2", "toto_3"],
+        owner: "",
         numObstacle: 40,
         numItems: 6,
         status: "normal",
@@ -215,25 +217,26 @@ export default {
       this.game.map = new_map;
       this.game.players = gen_player;
       this.game.generateNewMapCount++;
+      this.game.owner = this.user.pass_id;
 
       const game = {
         name: this.game.name,
         code: this.game.code,
         map: this.game.map,
+        actions: [],
         players: [{ name: this.user.username, _id: this.user.pass_id }],
         owner: this.user.pass_id,
         status: this.game.status,
-        created_at: "",
-        updated_at: ""
       };
       axios
         .post("http://localhost:8000/api/game/create", game)
         .then(response => {
+          console.log("The game was create !");
           console.log(response);
           // Pour l'instant, le this.game.code est vide car je dois le récupérer grace au back.
           // Est ce que je peux faire une requet Get dans la réponse de cette requet Post ?
           // Pour pouvoir récupérer le this.game.code et ainsi changer l'url avec une bonne url.
-          this.$router.push("/room/" + this.game.code);
+          //this.$router.push("/room/" + this.game.code);
         })
         .catch(error => {
           console.error("There was an error!", error);

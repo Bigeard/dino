@@ -12,6 +12,10 @@ module.exports = mongoose => {
             map: [Object],
             actions: [Object],
             players: [Object],
+            owner: {
+                type: String,
+                required: true
+            },
             status: {
                 type: String,
                 required: true
