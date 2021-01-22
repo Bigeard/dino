@@ -228,14 +228,14 @@ export default {
       };
       axios
         .post("http://localhost:8000/game", game)
-        .then((response) => {
+        .then(response => {
           console.log(response);
           // Pour l'instant, le this.game.code est vide car je dois le récupérer grace au back.
           // Est ce que je peux faire une requet Get dans la réponse de cette requet Post ?
           // Pour pouvoir récupérer le this.game.code et ainsi changer l'url avec une bonne url.
           this.$router.push("/room/" + this.game.code);
         })
-        .catch((error) => {
+        .catch(error => {
           console.error("There was an error!", error);
         });
     }

@@ -62,12 +62,14 @@
               <td
                 v-for="(cell, x) in row"
                 :key="x"
-                :class="`cell 
+                :class="
+                  `cell 
               ${cell.id + 1 ? cell.name + (cell.id + 1) : cell.name}
               ${cell.obj ? 'obj' : ''}
               ${cell.view_distance ? ' ' + cell.view_distance : ''}
               ${cell.name === 'Player' ? 'Player' : ''}
-              `"
+              `
+                "
               ></td>
             </tr>
           </table>
@@ -133,12 +135,12 @@ export default {
     setInterval(() => {
       axios
         .get(`http://localhost:8000/game`)
-        .then((response) => {
+        .then(response => {
           // JSON responses are automatically parsed.
           console.log(response);
           //this.players = response.data.players;
         })
-        .catch((e) => {
+        .catch(e => {
           console.error(e);
         });
     }, 3000);
@@ -185,7 +187,7 @@ export default {
         () => {
           this.infoClipboard = "Copying to clipboard was successful!";
         },
-        (err) => {
+        err => {
           this.infoClipboard = "Could not copy text... " + err;
           console.error("Async: Could not copy text: ", err);
         }
@@ -197,13 +199,13 @@ export default {
     getGame() {
       axios
         .get(`http://localhost:8000/game`)
-        .then((response) => {
+        .then(response => {
           // JSON responses are automatically parsed.
           console.log(response);
           //this.game.code = response.data.code;
           //this.players = response.data.players;
         })
-        .catch((e) => {
+        .catch(e => {
           console.error(e);
         });
     },
