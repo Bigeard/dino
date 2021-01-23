@@ -30,7 +30,7 @@ exports.create = (req, res) => {
 exports.findByCode = (req, res, sendData) => {
   const code = req.params.code;
   // No validation because it's a GET request
-  Game.findOne({ code: code }, "-code")
+  Game.findOne({ code: code })
     .then((data) => {
       if (!data) res.status(404).send({ message: "Not found game..." });
       else return sendData ? res.send(data) : data;
@@ -40,7 +40,7 @@ exports.findByCode = (req, res, sendData) => {
     });
 };
 
-// Update a User id in the request
+// Update a Game id in the request
 exports.update = (req, res) => {
   // Validate request
   const name = req.body.name;
@@ -51,7 +51,7 @@ exports.update = (req, res) => {
   const owner = req.body.owner;
   const status = req.body.status;
 
-  if (!name || !code || !map || !actions || !players || !owner || !status) {
+  if (!name || !code || !map || !players || !owner || !status) {
     return res.status(400).send({
       message: "Data is incomplete!",
     });

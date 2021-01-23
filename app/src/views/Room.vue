@@ -26,20 +26,22 @@
             :info="info"
             :error="error"
             :status="status"
+            :disabled="user.pass_id === game.owner"
           />
           <gb-button
             @click="checkGamename"
             :class="status + '_valid'"
             right-icon="done"
+            :disabled="user.pass_id === game.owner"
           >
             Validate
           </gb-button>
         </div>
-        <gb-badge>Players : {{ players.length }} / 5</gb-badge>
+        <gb-badge>Players : {{ game.players.length }} / 5</gb-badge>
         <div class="player_list">
           <ul class="players">
             <li
-              v-for="(player, i) in players"
+              v-for="(player, i) in playersShow"
               :key="i"
               :class="`Player${i + 1}`"
             >
@@ -53,6 +55,7 @@
           @click="generateNewMap()"
           right-icon="refresh"
           v-model="generateNewMapCount"
+          :disabled="user.pass_id === game.owner"
         >
           Generate New Map
         </gb-button>
@@ -79,7 +82,13 @@
             Home
           </gb-button>
           <gb-button
-            :disabled="status !== 'normal' || game.name === ''"
+            :disabled="
+              status !== 'normal' ||
+                game.name === '' ||
+                user.pass_id === game.owner ||
+                game.players.length > 1 ||
+                game.players.length < 6
+            "
             @click="startGame()"
             right-icon="arrow_forward"
           >
@@ -112,25 +121,33 @@ export default {
   },
   data() {
     return {
-      game: { name: "", code: "666" },
-      gamename: "",
-      width: 20,
-      height: 20,
-      players: [],
-      owner: null,
-      numObstacle: 40,
-      numItems: 6,
-      info: null,
-      status: "normal",
-      error: null,
-      infoClipboard: "",
-      generateNewMapCount: 0,
       user: {
         username: null,
         pass_id: null
-      }
+      },
+      game: {
+        name: "",
+        code: "666",
+        map: [],
+        actions: [],
+        players: [],
+        owner: null,
+        status: "inProgress"
+      },
+      gamename: "",
+      width: 20,
+      height: 20,
+      numObstacle: 40,
+      numItems: 6,
+      playersShow: [],
+      info: null,
+      status: "inProgress",
+      error: null,
+      infoClipboard: "",
+      generateNewMapCount: 0
     };
   },
+  /*
   async created() {
     setInterval(() => {
       axios
@@ -145,6 +162,7 @@ export default {
         });
     }, 3000);
   },
+  */
   watch: {
     gamename(v) {
       this.onChangeGamename(v);
@@ -178,8 +196,6 @@ export default {
     async checkGamename() {
       if (this.status === "normal") {
         this.game.name = this.gamename;
-        this.game.code = this.gamename + "-code";
-        this.game._id = this.gamename + "-code";
       }
     },
     copyGameCode() {
@@ -196,38 +212,44 @@ export default {
         this.infoClipboard = "";
       }, 3000);
     },
-    getGame() {
+    async getGame() {
+      let game = await this.$db.game.get({ _id: 0 });
       axios
-        .get(`http://localhost:8000/game`)
+        .get("http://localhost:8000/api/game/readByCode/" + game.code)
         .then(response => {
           // JSON responses are automatically parsed.
-          console.log(response);
-          //this.game.code = response.data.code;
-          //this.players = response.data.players;
+          this.game.code = response.data.code;
+          this.game.players = response.data.players;
+          this.game.owner = response.data.owner;
+          this.playersShow = response.data.players;
         })
         .catch(e => {
-          console.error(e);
+          console.error("There was an error !", e);
         });
     },
     async generateNewMap() {
       const user = await this.$db.user.get({ id: 0 });
       // @TODO Temporary
-      if (this.players.length === 3) {
-        this.players.unshift(user.username);
+      if (this.game.players.length === 3) {
+        this.game.players.unshift(user.username);
       }
       const { new_map, gen_player } = generateMap(
         this.width,
         this.width,
-        this.players,
+        this.game.players,
         this.numObstacle,
         this.numItems,
         items
       );
       this.game.map = new_map;
-      this.game.players = gen_player;
+      //this.game.players = gen_player;
       this.generateNewMapCount++;
+      //console.log(1, this.game.map);
+      console.log(2, gen_player);
+      //console.log(3, this.game.players);
     },
     async startGame() {
+      /*
       await this.$db.game.add({
         _id: this.game._id,
         name: this.game.name,
@@ -238,7 +260,28 @@ export default {
         height: this.height,
         status: "inProgress"
       });
-      this.$router.push("/game/" + this.game.code);
+      */
+
+      const game = {
+        name: this.game.name,
+        code: this.game.code,
+        map: this.game.map,
+        actions: this.game.actions,
+        players: this.game.players,
+        owner: this.game.owner,
+        status: this.game.status
+      };
+      axios
+        .patch("http://localhost:8000/api/game/update", game)
+        .then(response => {
+          // JSON responses are automatically parsed.
+          console.log("The game was update !");
+          console.log(response);
+          this.$router.push("/game/" + this.game.code);
+        })
+        .catch(e => {
+          console.error("There was an error !", e);
+        });
     }
   }
 };
