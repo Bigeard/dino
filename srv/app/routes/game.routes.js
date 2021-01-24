@@ -16,10 +16,13 @@ module.exports = (app) => {
   //router.get("/:id", game.findOne);
 
   // Retrieve a single game with code
-  router.get("/readByCode/:code", game.findByCode);
+  router.get("/readByCode/", game.findByCode);
 
   // Update a game with code
   router.patch("/update/", game.update);
+
+  // Update a game with code
+  //router.patch("/updatePLayers/", game.updatePlayers);
 
   app.use("/api/game", router);
 };
