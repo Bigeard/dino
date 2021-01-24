@@ -21,8 +21,5 @@ module.exports = (app) => {
   // Update a game with code
   router.patch("/update/", game.update);
 
-  // Update a game with code
-  //router.patch("/updatePLayers/", game.updatePlayers);
-
   app.use("/api/game", router);
 };

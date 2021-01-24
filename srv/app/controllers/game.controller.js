@@ -3011,7 +3011,7 @@ exports.findByCode = (req, res, sendData) => {
 exports.update = async (req, res) => {
   const passId = req.body.passId;
   const codeBody = req.body.code;
-  const nameBody = req.body.name
+  const nameBody = req.body.name;
   const game = {
     name: "",
     code: "",
@@ -3041,14 +3041,14 @@ exports.update = async (req, res) => {
             if (!data) {
               res.status(404).send({ message: "Not found game..." });
             } else {
-              game.name = nameBody;
-              game.code = data.code;
-              game.map = data.map;
-              game.actions = data.actions;
-              game.players = data.players;
-              game.owner = data.owner;
               if (passId === data.owner) {
-                // Update Game in the database
+                game.name = nameBody;
+                game.code = data.code;
+                game.map = data.map;
+                game.actions = data.actions;
+                game.players = data.players;
+                game.owner = data.owner;
+                // Update name, status and map of this Game in the database if it is the owner
                 return await Game.updateOne(game)
                   .then((data) => res.send(data))
                   .catch((err) => {
@@ -3059,9 +3059,23 @@ exports.update = async (req, res) => {
                     });
                   });
               } else {
-                return res
-                  .status(401)
-                  .send({ message: "Unauthorized update the Game !" });
+                game.name = data.name;
+                game.code = data.code;
+                game.map = data.map;
+                game.actions = data.actions;
+                game.players.push(user);
+                game.owner = data.owner;
+                game.status = data.status;
+                // Update player of this Game in the database if it is not the owner
+                return await Game.updateOne(game)
+                  .then((data) => res.send(data))
+                  .catch((err) => {
+                    res.status(500).send({
+                      message:
+                        err.message ||
+                        "Some error occurred while update the Game.",
+                    });
+                  });
               }
             }
           })
