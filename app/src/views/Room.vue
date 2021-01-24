@@ -45,7 +45,7 @@
               :key="i"
               :class="`Player${i + 1}`"
             >
-              <img src="../../public/img/icons/zorfiL.gif" />{{ player }}
+              <img src="../../public/img/icons/zorfiL.gif" />{{ player.name }}
             </li>
           </ul>
         </div>
@@ -213,9 +213,8 @@ export default {
       }, 3000);
     },
     async getGame() {
-      let game = await this.$db.game.get({ _id: 0 });
       axios
-        .get("http://localhost:8000/api/game/readByCode/" + game.code)
+        .get("http://localhost:8000/api/game/readByCode/" + this.$route.params.code)
         .then(response => {
           // JSON responses are automatically parsed.
           this.game.code = response.data.code;
@@ -242,7 +241,7 @@ export default {
         items
       );
       this.game.map = new_map;
-      //this.game.players = gen_player;
+      this.game.players = gen_player;
       this.generateNewMapCount++;
       //console.log(1, this.game.map);
       console.log(2, gen_player);

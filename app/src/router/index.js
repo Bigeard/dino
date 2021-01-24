@@ -33,12 +33,6 @@ const routes = [
     name: "Game",
     component: Game
   },
-  // @TODO This is temporary
-  {
-    path: "/room",
-    name: "Room Temporary",
-    component: Room
-  },
   {
     path: "/room/:code",
     name: "Room",
