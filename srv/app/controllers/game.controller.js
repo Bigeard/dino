@@ -2,15 +2,13 @@ const { v4: uuidv4 } = require("uuid");
 const db = require("../models");
 const generateMap = require("../tools/game/lib/index");
 const items = require("../tools/game/data/items");
-const GameDB = db.game;
+const Game = db.game;
 const User = db.user;
 
 // Create and Save a new Game
-exports.create = (req, res, sendData) => {
-  const db = require("../models");
-  const GameDB = db.game;
-
-  const gameObject = {
+exports.create = async (req, res, sendData) => {
+  const passId = req.body.passId;
+  const game = new Game({
     name: "",
     code: uuidv4(),
     map: [
@@ -2932,57 +2930,67 @@ exports.create = (req, res, sendData) => {
     actions: [],
     players: [],
     owner: "",
-    status: "creating-new-game"
-  };
+    status: "creating-new-game",
+  });
 
-  const userObject = {
-    _id: "",
+  const user = {
     username: "",
+    passId: "",
   };
 
-  // Create a Game
-  const passId = req.body.passId;
-  if (!passId) res.status(404).send({ message: "Not found user..." });
-  return User.findOne({ passId: passId }, "-passId")
+  // Find User in the database
+  const findUser = await User.findOne({ passId: passId }, "-passId")
     .then(async (data) => {
       if (!data) {
         res.status(404).send({ message: "Not found user..." });
       } else {
-        userObject._id = req.body.passId;
-        userObject.username = data.username;
+        user.passId = req.body.passId;
+        user.username = data.username;
 
-        gameObject.name = "game of " + data.username;
-        gameObject.players = userObject;
+        game.name = "game of " + data.username;
+        game.players = user;
 
         /*
-        const { new_map, gen_player } = generateMap(
-          20,
-          20,
-          gameObject.players,
-          40,
-          6,
-          items
-        );
-        */
-        //gameObject.generateNewMapCount++;
-        gameObject.owner = req.body.passId;
-        console.log(1, gameObject);
-      
+      const { new_map, gen_player } = generateMap(
+        20,
+        20,
+        game.players,
+        40,
+        6,
+        items
+      );
+      */
+        //game.generateNewMapCount++;
+        game.owner = req.body.passId;
+
         // Save Game in the database
-        await GameDB
-          .save(gameObject)
+        /*if (
+          !game.name ||
+          !game.code ||
+          !game.owner ||
+          !game.status
+        ) { */
+        return await game
+          .save(game)
           .then((data) => res.send(data))
-          .catch((err) =>
+          .catch((err) => {
             res.status(500).send({
-              message: err.message || "Some error occurred while creating the Game.",
-            })
-          );
+              message:
+                err.message || "Some error occurred while creating the Game.",
+            });
+          });
+        //}
+        //res.status(500).send({ message: "Data is incomplete!" });
       }
-      return sendData ? res.send(data) : data;
+      res.status(400).send({ message: "Error server..." });
     })
     .catch((error) => {
       res.status(500).send({ message: error.message || "Error server..." });
     });
+
+  // Create a Game
+  if (!passId) res.status(404).send({ message: "Not found user..." });
+  return findUser;
 };
 
 // Find a single Game with a code
