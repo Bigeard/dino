@@ -2,11 +2,14 @@ const { v4: uuidv4 } = require("uuid");
 const db = require("../models");
 const generateMap = require("../tools/game/lib/index");
 const items = require("../tools/game/data/items");
-const Game = db.game;
+const GameDB = db.game;
 const User = db.user;
 
 // Create and Save a new Game
 exports.create = (req, res, sendData) => {
+  const db = require("../models");
+  const GameDB = db.game;
+
   const gameObject = {
     name: "",
     code: uuidv4(),
@@ -2941,7 +2944,7 @@ exports.create = (req, res, sendData) => {
   const passId = req.body.passId;
   if (!passId) res.status(404).send({ message: "Not found user..." });
   return User.findOne({ passId: passId }, "-passId")
-    .then((data) => {
+    .then(async (data) => {
       if (!data) {
         res.status(404).send({ message: "Not found user..." });
       } else {
@@ -2966,7 +2969,7 @@ exports.create = (req, res, sendData) => {
         console.log(1, gameObject);
       
         // Save Game in the database
-        Game
+        await GameDB
           .save(gameObject)
           .then((data) => res.send(data))
           .catch((err) =>
@@ -2977,8 +2980,8 @@ exports.create = (req, res, sendData) => {
       }
       return sendData ? res.send(data) : data;
     })
-    .catch((_) => {
-      res.status(500).send({ message: "Error server..." });
+    .catch((error) => {
+      res.status(500).send({ message: error.message || "Error server..." });
     });
 };
 
