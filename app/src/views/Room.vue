@@ -26,13 +26,13 @@
             :info="info"
             :error="error"
             :status="status"
-            :disabled="user.pass_id === game.owner"
+            :disabled="user.pass_id !== game.owner"
           />
           <gb-button
             @click="checkGamename"
             :class="status + '_valid'"
             right-icon="done"
-            :disabled="user.pass_id === game.owner"
+            :disabled="user.pass_id !== game.owner"
           >
             Validate
           </gb-button>
@@ -45,7 +45,9 @@
               :key="i"
               :class="`Player${i + 1}`"
             >
-              <img src="../../public/img/icons/zorfiL.gif" />{{ player.name }}
+              <img src="../../public/img/icons/zorfiL.gif" />{{
+                player.username
+              }}
             </li>
           </ul>
         </div>
@@ -55,7 +57,7 @@
           @click="generateNewMap()"
           right-icon="refresh"
           v-model="generateNewMapCount"
-          :disabled="user.pass_id === game.owner"
+          :disabled="user.pass_id !== game.owner"
         >
           Generate New Map
         </gb-button>
@@ -85,7 +87,7 @@
             :disabled="
               status !== 'normal' ||
                 game.name === '' ||
-                user.pass_id === game.owner ||
+                user.pass_id !== game.owner ||
                 game.players.length > 1 ||
                 game.players.length < 6
             "
@@ -108,10 +110,7 @@
 </template>
 
 <script>
-import { generateMap } from "../game/lib/index";
-import { items } from "../game/data/items";
 import axios from "axios";
-
 export default {
   name: "Room",
   beforeMount() {
@@ -213,72 +212,69 @@ export default {
       }, 3000);
     },
     async getGame() {
+      let user = await this.$db.user.get({ id: 0 });
+      const update = {
+        passIdCurentUser: user.pass_id,
+        code: this.$route.params.code,
+        name: "Game of " + user.username
+      };
       axios
-        .get(
-          "http://localhost:8000/api/game/readByCode/" + this.$route.params.code
-        )
+        .patch("http://localhost:8000/api/game/update/", update)
         .then(response => {
           // JSON responses are automatically parsed.
           this.game.code = response.data.code;
+          this.game.map = response.data.map;
           this.game.players = response.data.players;
           this.game.owner = response.data.owner;
           this.playersShow = response.data.players;
+          this.user = user;
+          console.log(1, this.user);
+          console.log(2, this.game);
         })
         .catch(e => {
           console.error("There was an error !", e);
         });
     },
     async generateNewMap() {
-      const user = await this.$db.user.get({ id: 0 });
-      // @TODO Temporary
-      if (this.game.players.length === 3) {
-        this.game.players.unshift(user.username);
-      }
-      const { new_map, gen_player } = generateMap(
-        this.width,
-        this.width,
-        this.game.players,
-        this.numObstacle,
-        this.numItems,
-        items
-      );
-      this.game.map = new_map;
-      this.game.players = gen_player;
-      this.generateNewMapCount++;
-      //console.log(1, this.game.map);
-      console.log(2, gen_player);
-      //console.log(3, this.game.players);
+      console.warn("This feature is under development !");
     },
     async startGame() {
-      /*
-      await this.$db.game.add({
-        _id: this.game._id,
-        name: this.game.name,
-        code: this.game.code,
-        map: this.game.map,
-        players: this.game.players,
-        width: this.width,
-        height: this.height,
-        status: "inProgress"
-      });
-      */
-
-      const game = {
-        name: this.game.name,
-        code: this.game.code,
-        map: this.game.map,
-        actions: this.game.actions,
-        players: this.game.players,
-        owner: this.game.owner,
-        status: this.game.status
+      let user = await this.$db.user.get({ id: 0 });
+      const update = {
+        passId: user.pass_id,
+        code: this.$route.params.code,
+        name: this.game.name
       };
       axios
-        .patch("http://localhost:8000/api/game/update", game)
-        .then(response => {
+        .patch("http://localhost:8000/api/game/update/", update)
+        .then(async response => {
           // JSON responses are automatically parsed.
-          console.log("The game was update !");
-          console.log(response);
-          this.$router.push("/game/" + this.game.code);
+          this.game.code = response.data.code;
+          this.game.map = response.data.map;
+          this.game.players = response.data.players;
+          this.game.owner = response.data.owner;
+          this.playersShow = response.data.players;
+
+          // Create game in indexDB
+          let game = await this.$db.game.get({ _id: response.data.code });
+          if (game === undefined) {
+            game = {
+              _id: 0,
+              name: response.data.name,
+              code: response.data.code,
+              map: response.data.map,
+              actions: response.data.actions,
+              players: response.data.players,
+              owner: response.data.owner,
+              status: response.data.status,
+              created_at: response.data.created_at,
+              updated_at: response.data.updated_at
+            };
+            await this.$db.game.add(game);
+
+            // eslint-disable-next-line no-empty
+            this.$router.push("/game/" + this.game.code);
+          }
         })
         .catch(e => {
           console.error("There was an error !", e);

@@ -80,4 +80,4 @@ const generateMap = (width, height, players, numObstacle, numItems, items) => {
   return { new_map: map, gen_player: players };
 };
 
-//export { randInt, generateMap };
+module.exports = { randInt, generateMap };
