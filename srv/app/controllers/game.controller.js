@@ -5,8 +5,26 @@ const items = require("../tools/game/data/items");
 const Game = db.game;
 const User = db.user;
 
+const gameObject = {
+  map: [],
+  players: [],
+  generateNewMapCount: 0,
+};
+
 // Create and Save a new Game
 exports.create = async (req, res) => {
+  /*
+  const { new_map, gen_player } = generateMap(
+    20,
+    20,
+    [],
+    40,
+    6,
+    items
+  );
+  console.log(1, new_map);
+  console.log(2, gen_player);
+  */
   const passId = req.body.passId;
   const game = new Game({
     name: "",
@@ -2950,17 +2968,13 @@ exports.create = async (req, res) => {
         game.name = "game of " + data.username;
         game.players = user;
 
-        /*
-      const { new_map, gen_player } = generateMap(
-        20,
-        20,
-        game.players,
-        40,
-        6,
-        items
-      );
-      */
-        //game.generateNewMapCount++;
+        //console.log(3, new_map);
+        //gameObject.map = new_map;
+        //gameObject.players = gen_player;
+        gameObject.map = game.map;
+        gameObject.players = user;
+        gameObject.generateNewMapCount++;
+
         game.owner = req.body.passId;
 
         // Save Game in the database
@@ -3044,9 +3058,9 @@ exports.update = async (req, res) => {
               if (passId === data.owner) {
                 game.name = nameBody;
                 game.code = data.code;
-                game.map = data.map;
+                game.map = gameObject.map;
                 game.actions = data.actions;
-                game.players = data.players;
+                game.players = gameObject.players;
                 game.owner = data.owner;
                 // Update name, status and map of this Game in the database if it is the owner
                 return await Game.updateOne(game)
@@ -3066,6 +3080,7 @@ exports.update = async (req, res) => {
                 game.players.push(user);
                 game.owner = data.owner;
                 game.status = data.status;
+                gameObject.players = game.players;
                 // Update player of this Game in the database if it is not the owner
                 return await Game.updateOne(game)
                   .then((data) => res.send(data))
