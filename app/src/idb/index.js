@@ -11,19 +11,28 @@ export default new VueIdb({
     {
       game:
         "_id, name, code, map, players, width, height, closeDialogWin, status, created_at, updated_at"
+    },
+    {
+      action: "id, body, status, updated_at, created_at"
     }
   ],
   options: {
     user: {
       type: "list",
       primary: "id",
-      label: "username",
+      label: "User",
       updated_at: "updated_at"
     },
     game: {
       type: "list",
       primary: "_id",
-      label: "name",
+      label: "Game",
+      updated_at: "updated_at"
+    },
+    action: {
+      type: "list",
+      primary: "id",
+      label: "Action",
       updated_at: "updated_at"
     }
   }

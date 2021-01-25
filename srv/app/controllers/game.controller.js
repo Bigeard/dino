@@ -139,11 +139,15 @@ exports.update = async (req, res) => {
 // Action Game
 exports.action = async (req, res) => {
   const { passId, code, x, y } = req.body;
-  if (!passId || !code) {
+  if (!passId || !code || !x || !y) {
     return res.status(400).send({
       message: "Data is incomplete!",
     });
   }
+
+  console.log("Action:", x, y);
+  console.log("Code:", code);
+  console.log("passId:", passId);
 
   // Detect if user exist
   const user = await userController.findByPassId(req, res, false);
