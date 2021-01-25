@@ -79,8 +79,6 @@
 </template>
 
 <script>
-import { generateMap } from "../game/lib/index";
-import { items } from "../game/data/items";
 import axios from "axios";
 
 export default {
@@ -114,20 +112,7 @@ export default {
         username: null,
         pass_id: null
       },
-      deferredPrompt: null,
-      game: {
-        name: "666",
-        code: "666",
-        width: 20,
-        height: 20,
-        actions: [],
-        players: ["toto_1", "toto_2", "toto_3"],
-        owner: "",
-        numObstacle: 40,
-        numItems: 6,
-        status: "Starting Game",
-        generateNewMapCount: 0
-      }
+      deferredPrompt: null
     };
   },
   watch: {
@@ -166,7 +151,7 @@ export default {
         this.info = null;
       } else if (!/^[\w.]*$/.test(v)) {
         this.error =
-          "you can only use the following characters: \"A-z\" \"0-9\" \"_\"";
+          'you can only use the following characters: "A-z" "0-9" "_"';
         this.status = "error";
         this.info = null;
       } else {
@@ -216,53 +201,13 @@ export default {
       this.deferredPrompt.prompt();
     },
     async creatNewGame() {
-      let user = await this.$db.user.get({ id: 0 });
-      const { new_map, gen_player } = generateMap(
-        this.game.height,
-        this.game.width,
-        this.game.players,
-        this.game.numObstacle,
-        this.game.numItems,
-        items
-      );
-      this.game.players.unshift(user.username);
-      this.game.map = new_map;
-      this.game.players = gen_player;
-      this.game.generateNewMapCount++;
-      this.game.owner = this.user.pass_id;
-
-      const game = {
-        name: this.game.name,
-        code: this.game.code,
-        map: this.game.map,
-        actions: [],
-        players: [{ name: this.user.username, _id: this.user.pass_id }],
-        owner: this.user.pass_id,
-        status: this.game.status
+      const passId = {
+        passId: this.user.pass_id
       };
       axios
-        .post("http://localhost:8000/api/game/create", game)
+        .post("http://localhost:8000/api/game/create", passId)
         .then(async response => {
-          console.log("The game was create !");
-          console.log(response);
-          let game = await this.$db.game.get({ _id: response.data.code });
-          if (game === undefined) {
-            game = {
-              _id: 0,
-              name: response.data.name,
-              code: response.data.code,
-              map: response.data.map,
-              actions: response.data.actions,
-              players: response.data.players,
-              owner: response.data.owner,
-              status: response.data.status,
-              created_at: response.data.created_at,
-              updated_at: response.data.updated_at
-            };
-            await this.$db.game.add(game);
-            // eslint-disable-next-line no-empty
-            this.$router.push("/room/" + response.data.code);
-          }
+          this.$router.push("/room/" + response.data.code);
         })
         .catch(error => {
           console.error("There was an error!", error);

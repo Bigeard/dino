@@ -214,7 +214,9 @@ export default {
     },
     async getGame() {
       axios
-        .get("http://localhost:8000/api/game/readByCode/" + this.$route.params.code)
+        .get(
+          "http://localhost:8000/api/game/readByCode/" + this.$route.params.code
+        )
         .then(response => {
           // JSON responses are automatically parsed.
           this.game.code = response.data.code;
