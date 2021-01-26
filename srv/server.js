@@ -1,8 +1,14 @@
+require('dotenv').config({ path: 'variables.env' });
 const express = require("express");
+const webPush = require('web-push');
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const path = require('path');
 
 const app = express();
+
+const publicVapidKey = process.env.PUBLIC_VAPID_KEY;
+const privateVapidKey = process.env.PRIVATE_VAPID_KEY;
 
 const PORT = process.env.PORT || 8000;
 
@@ -49,6 +55,26 @@ require("./app/routes/user.routes")(app);
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "dino-game.tech 's API" });
+});
+
+//------- notif -------
+app.use(express.static(path.join(__dirname, '../app')));
+webPush.setVapidDetails('mailto:pageauxclement@gmail.com', publicVapidKey, privateVapidKey);
+
+// Subscribe route
+
+app.post('/subscribe', (req, res) => {
+  const subscription = req.body
+
+  res.status(201).json({});
+
+  // create payload
+  const payload = JSON.stringify({
+    title: 'Push notifications with Service Workers',
+  });
+
+  webPush.sendNotification(subscription, payload)
+    .catch(error => console.error(error));
 });
 
 app.listen(PORT, () => {

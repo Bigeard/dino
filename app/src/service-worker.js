@@ -40,3 +40,11 @@ self.addEventListener("install", (event) => {
 self.addEventListener('fetch', function(event) {
   event.respondWith(fetch(event.request));
 });
+
+self.addEventListener('push', event => {
+  const data = event.data.json();
+
+  self.registration.showNotification(data.title, {
+    body: 'Notification reçu',
+  });
+});
