@@ -32,8 +32,8 @@ self.addEventListener('message', (event) => {
  */
 /* self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {}); */
-const DATABASE = "dino"
-const VERSION = 10
+const DATABASE = "dino";
+const VERSION = 10;
 
 /**
  * The function get value in the indexedDB
@@ -48,7 +48,6 @@ const get = (tab, val) => {
       const tran = db.transaction([tab], "readonly");
       const store = tran.objectStore(tab);
       const cursorRequest = store.get(val);
-      console.log();
       cursorRequest.onsuccess = e => resolve(e.target.result);
     };
   });
@@ -107,9 +106,8 @@ const getResponse = async req => {
     if (req.url === "http://localhost:8000/api/game/readByCode") {
       const game = await get("game", "aaaa-code");
       return new Response(JSON.stringify(game));
-    }
-    else if (req.url === "http://localhost:8000/api/game/action") {
-      await add("action", {
+    } else if (req.url === "http://localhost:8000/api/game/action") {
+      add("action", {
         id: Date.now(),
         body: await req.json(),
         status: "wait",
