@@ -26,13 +26,13 @@
             :info="info"
             :error="error"
             :status="status"
-            :disabled="user.pass_id !== game.owner"
+            :disabled="user._id !== game.owner"
           />
           <gb-button
             @click="checkGamename"
             :class="status + '_valid'"
             right-icon="done"
-            :disabled="user.pass_id !== game.owner"
+            :disabled="user._id !== game.owner"
           >
             Validate
           </gb-button>
@@ -57,7 +57,7 @@
           @click="generateNewMap()"
           right-icon="refresh"
           v-model="generateNewMapCount"
-          :disabled="user.pass_id !== game.owner"
+          :disabled="user._id !== game.owner"
         >
           Generate New Map
         </gb-button>
@@ -85,11 +85,11 @@
           </gb-button>
           <gb-button
             :disabled="
-              status !== 'normal' ||
+              game.status !== 'inProgress' ||
                 game.name === '' ||
-                user.pass_id !== game.owner ||
-                game.players.length > 1 ||
-                game.players.length < 6
+                user._id !== game.owner ||
+                game.players.length <= 1 ||
+                game.players.length >= 6
             "
             @click="startGame()"
             right-icon="arrow_forward"
@@ -122,7 +122,8 @@ export default {
     return {
       user: {
         username: null,
-        pass_id: null
+        pass_id: null,
+        _id: null,
       },
       game: {
         name: "",
@@ -214,6 +215,7 @@ export default {
     async getGame() {
       let user = await this.$db.user.get({ id: 0 });
       const update = {
+        id: user._id,
         passIdCurentUser: user.pass_id,
         code: this.$route.params.code,
         name: "Game of " + user.username
@@ -228,8 +230,6 @@ export default {
           this.game.owner = response.data.owner;
           this.playersShow = response.data.players;
           this.user = user;
-          console.log(1, this.user);
-          console.log(2, this.game);
         })
         .catch(e => {
           console.error("There was an error !", e);
@@ -241,7 +241,8 @@ export default {
     async startGame() {
       let user = await this.$db.user.get({ id: 0 });
       const update = {
-        passId: user.pass_id,
+        id: user._id,
+        passIdCurentUser: user.pass_id,
         code: this.$route.params.code,
         name: this.game.name
       };
@@ -267,8 +268,8 @@ export default {
               players: response.data.players,
               owner: response.data.owner,
               status: response.data.status,
-              created_at: response.data.created_at,
-              updated_at: response.data.updated_at
+              created_at: response.data.createdAt,
+              updated_at: response.data.updatedAt
             };
             await this.$db.game.add(game);
 

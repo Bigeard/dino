@@ -2,6 +2,7 @@ const { v4: uuidv4 } = require("uuid");
 const db = require("../models");
 const { generateMap, randInt } = require("../tools/game/lib");
 const items = require("../tools/game/data/items");
+const { user } = require("../models");
 const GameDB = db.game;
 const UserDB = db.user;
 
@@ -13,12 +14,18 @@ const gameObject = {
 
 // Create and Save a new Game
 exports.create = async (req, res) => {
+  const passId = req.body.passId;
   /*
   const { new_map, gen_player } = generateMap(20, 20, [], 40, 6, items);
   console.log(1, new_map);
   console.log(2, gen_player);
   */
-  const passId = req.body.passId;
+
+  const curentUserForCreateGame = {
+    id: "",
+    username: "",
+  };
+
   const game = new GameDB({
     name: "",
     code: uuidv4(),
@@ -2944,33 +2951,18 @@ exports.create = async (req, res) => {
     status: "creating-new-game",
   });
 
-  const curentUser = {
-    username: "",
-    passId: "",
-  };
-
   // Find User in the database
   const findUser = await UserDB.findOne({ passId: passId }, "-passId")
     .then(async (data) => {
       if (!data) {
         res.status(404).send({ message: "Not found user..." });
       } else {
-        // console.log(1, curentUser);
-        curentUser.passId = req.body.passId;
-        curentUser.username = data.username;
-        // console.log(2, curentUser);
+        curentUserForCreateGame.id = data._id;
+        curentUserForCreateGame.username = data.username;
 
         game.name = "game of " + data.username;
-        game.players = curentUser;
-
-        //console.log(3, new_map);
-        //gameObject.map = new_map;
-        //gameObject.players = gen_player;
-        gameObject.map = game.map;
-        gameObject.players.push(curentUser);
-        gameObject.generateNewMapCount++;
-
-        game.owner = req.body.passId;
+        game.players = curentUserForCreateGame;
+        game.owner = data._id;
 
         // Save Game in the database
         if (game.name || game.code || game.owner || game.status) {
@@ -3014,6 +3006,12 @@ exports.findByCode = (req, res, sendData) => {
 // Update a Game id in the request
 exports.update = async (req, res) => {
   const { passIdCurentUser, code, name } = req.body;
+
+  const user = {
+    _id: "",
+    username: "",
+  };
+
   const game = {
     name: "",
     code: "",
@@ -3024,33 +3022,26 @@ exports.update = async (req, res) => {
     status: "game-launched",
   };
 
-  const curentUser = {
-    username: "",
-    passId: "",
-  };
-
   // Find User in the database
   const findUser = await UserDB.findOne({ passId: passIdCurentUser }, "-passId")
     .then(async (data) => {
       if (!data) {
         res.status(404).send({ message: "Not found user..." });
       } else {
-        // console.log(1, curentUser);
-        curentUser.passId = passIdCurentUser;
-        curentUser.username = data.username;
-        // console.log(2, curentUser);
+        user._id = data._id;
+        user.username = data.username;
         // Find a single Game with a code
         return await GameDB.findOne({ code: code })
           .then(async (data) => {
             if (!data) {
               res.status(404).send({ message: "Not found game..." });
             } else {
-              if (passIdCurentUser === data.owner) {
+              if (user._id == data.owner) {
                 game.name = name;
                 game.code = data.code;
-                game.map = gameObject.map;
+                game.map = data.map;
                 game.actions = data.actions;
-                game.players = gameObject.players;
+                game.players = data.players;
                 game.owner = data.owner;
                 // Update name, status and map of this Game in the database if it is the owner
                 return await GameDB.updateOne(game)
@@ -3071,24 +3062,24 @@ exports.update = async (req, res) => {
                   });
               } else {
                 if (
-                  gameObject.players.length > 0 &&
-                  gameObject.players.length < 6
+                  data.players.length > 0 &&
+                  data.players.length < 6
                 ) {
-                  let filterPlayers = gameObject.players.filter(
-                    (player) => player.username == curentUser.username
+                  let filterPlayers = data.players.filter(
+                    (player) =>
+                      player.username == user.username
                   );
                   if (filterPlayers.length === 0) {
-                    gameObject.players.push(curentUser);
+                    data.players.push(user);
                   }
                 }
                 game.name = data.name;
                 game.code = data.code;
                 game.map = data.map;
                 game.actions = data.actions;
-                game.players = gameObject.players;
+                game.players = data.players;
                 game.owner = data.owner;
                 game.status = data.status;
-                gameObject.players = game.players;
                 // Update player of this Game in the database if it is not the owner
                 return await GameDB.updateOne(game)
                   .then(async () => {

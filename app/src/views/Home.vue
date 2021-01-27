@@ -88,6 +88,7 @@ export default {
     if (user === undefined) {
       user = {
         id: 0,
+        _id: null,
         username: "",
         pass_id: null,
         updated_at: new Date()
@@ -109,6 +110,7 @@ export default {
       error: null,
       status: "normal",
       user: {
+        _id: null,
         username: null,
         pass_id: null
       },
@@ -170,8 +172,10 @@ export default {
               username: this.username
             })
             .then(response => {
+              console.log(5, response);
               user.username = response.data.username;
               user.pass_id = response.data.passId;
+              user._id = response.data._id;
             })
             .catch(() => {
               self.status = "error";
