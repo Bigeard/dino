@@ -41,10 +41,24 @@ self.addEventListener('fetch', function(event) {
   event.respondWith(fetch(event.request));
 });
 
+//push notif
 self.addEventListener('push', event => {
   const data = event.data.json();
 
   self.registration.showNotification(data.title, {
-    body: 'Notification reçu',
+    body: 'You have create new game !',
+    icon: 'img/icons/favicon-32x32.png',
   });
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.preventDefault();
+  event.notification.close();
+  if(event.action){
+      event.waitUntil(self.clients.openWindow(`/?origin=${event.action}`));
+  }
+  else{
+      event.waitUntil(self.clients.openWindow("/?origin=noaction"));
+  }
+  
 });

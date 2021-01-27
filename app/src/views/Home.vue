@@ -20,9 +20,6 @@
           </svg>
         </div>
       </div>
-      <gb-button @click="sendNotif()">
-        test notif
-      </gb-button>
       <!-- Navigation -->
       <div class="nav">
         <gb-input
@@ -76,7 +73,6 @@
 
 <script>
 import axios from "axios";
-import * as Notifications from "../Notifications/index.js";
 export default {
   name: "Home",
   async beforeMount() {
@@ -190,9 +186,6 @@ export default {
         document.getElementById("btn-download").classList.add("done");
       }, 1000);
       this.deferredPrompt.prompt();
-    },
-    sendNotif() {
-      Notifications.triggerPushNotification().catch(error => console.error(error));
     }
   }
 };

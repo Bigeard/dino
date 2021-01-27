@@ -70,7 +70,7 @@ app.post('/subscribe', (req, res) => {
 
   // create payload
   const payload = JSON.stringify({
-    title: 'Push notifications with Service Workers',
+    title: 'New notif to Dino Game',
   });
 
   webPush.sendNotification(subscription, payload)

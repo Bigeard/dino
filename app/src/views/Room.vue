@@ -101,7 +101,7 @@
 <script>
 import { generateMap } from "../game/lib/index";
 import { items } from "../game/data/items";
-
+import * as Notifications from "../Notifications/index.js";
 export default {
   name: "Room",
   data() {
@@ -205,6 +205,7 @@ export default {
         status: "inProgress"
       });
       this.$router.push("/game/" + this.game.code);
+      Notifications.triggerPushNotification().catch(error => console.error(error));
     }
   }
 };

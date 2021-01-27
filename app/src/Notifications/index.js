@@ -23,27 +23,17 @@ export async function triggerPushNotification() {
       scope: '/'
     });
 
-    console.log('waiting for acceptance');
     const subscription = await register.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
     });
-    console.log('acceptance complete');
 
-/*     await fetch('/subscribe', {
-      method: 'POST',
-      body: JSON.stringify(subscription),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }); */
-    const json = JSON.stringify(subscription);
-    await axios.post("http://localhost:8000/subscribe", json, {
+    const body = JSON.stringify(subscription);
+    await axios.post("http://localhost:8000/subscribe", body, {
         headers: {
           'Content-Type': 'application/json'
         }
     })
-    console.log('acceptance finish');
   } else {
     console.error('Service workers are not supported in this browser');
   }
