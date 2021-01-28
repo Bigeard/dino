@@ -168,11 +168,10 @@ export default {
         var self = this;
         if (!user.pass_id) {
           await axios
-            .post("http://localhost:8000/api/user/create", {
+            .post("https://dino-srv.azurewebsites.net/api/user/create", {
               username: this.username
             })
             .then(response => {
-              console.log(5, response);
               user.username = response.data.username;
               user.pass_id = response.data.passId;
               user._id = response.data._id;
@@ -184,7 +183,7 @@ export default {
         } else {
           user.username = this.username;
           await axios
-            .patch("http://localhost:8000/api/user/update", {
+            .patch("https://dino-srv.azurewebsites.net/api/user/update", {
               username: this.username,
               passId: user.pass_id
             })
@@ -209,7 +208,7 @@ export default {
         passId: this.user.pass_id
       };
       axios
-        .post("http://localhost:8000/api/game/create", passId)
+        .post("https://dino-srv.azurewebsites.net/api/game/create", passId)
         .then(async response => {
           this.$router.push("/room/" + response.data.code);
         })

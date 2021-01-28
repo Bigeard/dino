@@ -1,6 +1,9 @@
 import { items } from "./data/items";
+import axios from "axios";
 
 export default class Game {
+  _id = "";
+  code = "";
   name = "";
   map = [];
   actionPlayer = null;
@@ -24,15 +27,26 @@ export default class Game {
    * @param {*} vue Vue component
    */
   async loadGame(vue) {
-    const game = await vue.$db.game.get({
-      code: vue.$route.params.code
-    });
+    // @TODO Change that for dynamic offline online
+    // const game = await vue.$db.game.get({
+    //   code: vue.$route.params.code
+    // });
+    const game = await axios
+      .post("https://dino-srv.azurewebsites.net/api/game/readByCode", {
+        code: vue.$route.params.code
+      })
+      .then(response => {
+        return response.data;
+      })
+      .catch(error => {
+        console.error(error);
+      });
     if (game) {
+      this._id = game._id;
+      this.code = game.code;
       this.name = game.name;
       this.map = game.map;
       this.players = game.players;
-      this.width = game.width;
-      this.height = game.height;
     } else {
       vue.$router.push("/error");
     }
@@ -66,14 +80,18 @@ export default class Game {
    * @param {Number} x Position of cell X
    * @param {Number} y Position of cell Y
    */
-  actionGame(x, y, e) {
+  async actionGame(vue, x, y, e) {
     this.select = this.map[y][x];
     console.log(`x: ${x} / y: ${y} - ${this.select.name}: `, this.select);
 
     // if the cell is currently in movement / distance selection
     if (
       this.map[y][x].view_distance === "Distance" &&
-      this.players[0]._id === this.actionPlayer.obj._id
+      this.actionPlayer.obj &&
+      this.players[0] &&
+      this.user &&
+      this.players[0]._id === this.actionPlayer.obj._id &&
+      this.user._id === this.actionPlayer.obj._id
     ) {
       if (this.map[y][x].name === "Player") {
         const totalDamage = this.calcTotalDamage(this.actionPlayer.obj);
@@ -139,6 +157,30 @@ export default class Game {
       }
       this.resetDistance();
       this.changeTurn();
+
+      const new_game = await axios
+        .post("https://dino-srv.azurewebsites.net/api/game/action", {
+          passId: this.user.pass_id,
+          code: vue.$route.params.code,
+          x: x,
+          y: y
+        })
+        .then(response => {
+          return response.data;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+      if (new_game.name) {
+        this.name = new_game.name;
+        this.map = new_game.map;
+        this.players = new_game.players;
+      }
+      await vue.$db.game.update(this._id, {
+        name: this.name,
+        map: this.map,
+        players: this.players
+      });
     } else if (this.map[y][x].name === "Player") {
       // Click on Player
       this.resetDistance();
@@ -203,15 +245,15 @@ export default class Game {
   }
 
   cellIsWalkable(x, y) {
-    if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
+    if (x < 0 || x >= this.map[0].length || y < 0 || y >= this.map.length) {
       return false;
     }
     return !this.map[y][x].obstacle;
   }
 
   resetDistance() {
-    for (let y = 0; y < this.height; y++) {
-      for (let x = 0; x < this.width; x++) {
+    for (let y = 0; y < this.map.length; y++) {
+      for (let x = 0; x < this.map[0].length; x++) {
         this.map[y][x].view_distance = null;
       }
     }

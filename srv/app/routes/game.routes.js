@@ -6,14 +6,8 @@ module.exports = (app) => {
   // Create a new game
   router.post("/create", game.create);
 
-  // Retrieve all games
-  //router.get("/", game.findAll);
-
-  // Retrieve all games of a user
-  //router.get("/:game", game.findByUser);
-
-  // Retrieve a single game with id
-  //router.get("/:id", game.findOne);
+  // Action Game
+  router.post("/action", game.action);
 
   // Retrieve a single game with code
   router.post("/readByCode", game.findByCode);

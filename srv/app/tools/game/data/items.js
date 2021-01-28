@@ -1,4 +1,4 @@
-const items = [
+exports.items = [
   {
     name: "Umbrella",
     icon: "🌂",

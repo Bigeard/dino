@@ -51,7 +51,7 @@ exports.findOne = (req, res) => {
 
 // Find a single User with a passId
 exports.findByPassId = (req, res, sendData) => {
-  const passId = req.params.passId;
+  const passId = req.body.passId;
   if (!passId) res.status(404).send({ message: "Not found user..." });
   return User.findOne({ passId: passId }, "-passId")
     .then((data) => {

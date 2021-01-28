@@ -13,7 +13,7 @@ module.exports = app => {
     router.get("/readById/:id", user.findOne);
 
     // Retrieve a single user with passId
-    router.get("/readByPassId/:passId", user.findByPassId);
+    router.post("/readByPassId", user.findByPassId);
 
     // Update a user with id
     router.patch("/update/", user.update)
