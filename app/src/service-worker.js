@@ -51,11 +51,15 @@ self.addEventListener('fetch', function(event) {
 });
 
 //push notif
-self.addEventListener('push', event => {
-  const data = event.data.json();
-
-  self.registration.showNotification(data.title, {
-    body: ' have create new game !',
-    icon: 'img/icons/favicon-32x32.png',
-  });
+self.addEventListener("push", function onPush(event) {
+  const data = event.data.json()
+  console.log(1, data);
+  event.waitUntil(self.registration.showNotification(data.title, {
+    body: data.body,
+    icon: data.icon,
+    actions: [ 
+      { action: 'Button one', title: "Button one text" },
+      { action: 'Button two', title: "Button two text" }
+    ]
+  }));
 });

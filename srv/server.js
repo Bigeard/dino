@@ -71,6 +71,8 @@ app.post('/subscribe', (req, res) => {
   // create payload
   const payload = JSON.stringify({
     title: 'New notif to Dino Game',
+    body: 'Game is created !',
+    icon: 'img/icons/favicon-32x32.png'
   });
 
   webPush.sendNotification(subscription, payload)
