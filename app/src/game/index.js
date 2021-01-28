@@ -153,8 +153,8 @@ export default class Game {
             obstacle: false,
             view_distance: null
           };
-          
-          notifications.triggerPushNotification();
+
+          notifications.winGamePushNotification();
 
           // If he is the last player, he has won!
           if (

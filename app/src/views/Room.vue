@@ -286,7 +286,7 @@ export default {
       axios
         .post("https://dino-srv.azurewebsites.net/api/game/update", update)
         .then(() => {
-          notifications.triggerPushNotification();
+          notifications.createGamePushNotification();
           this.$router.push("/game/" + this.game.code);
         })
         .catch(e => {

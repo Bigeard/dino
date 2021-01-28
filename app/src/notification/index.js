@@ -16,7 +16,7 @@ export function urlBase64ToUint8Array(base64String) {
 export const publicVapidKey =
   "BLQNszZ_CFPbPnu2lFsofwbX0rj1IsBp7hIfsqB7T8FtnUYan3wBLRG1izPpHXhyCDbTXk6-p88KvNDbvezMVGE";
 
-export async function triggerPushNotification() {
+export async function createGamePushNotification() {
   if ("serviceWorker" in navigator) {
     const register = await navigator.serviceWorker.register(
       "/service-worker.js",
@@ -32,7 +32,36 @@ export async function triggerPushNotification() {
     //send push notif
     const body = JSON.stringify(subscription);
     await axios
-      .post("http://localhost:8000/api/notification/subscribe", body, {
+      .post("http://localhost:8000/api/notification/create-game", body, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .catch(error => {
+        console.error("There was an error notification !", error);
+      });
+  } else {
+    console.error("Service workers are not supported in this browser");
+  }
+}
+
+export async function winGamePushNotification() {
+  if ("serviceWorker" in navigator) {
+    const register = await navigator.serviceWorker.register(
+      "/service-worker.js",
+      {
+        scope: "/"
+      }
+    );
+    //regsister push
+    const subscription = await register.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
+    });
+    //send push notif
+    const body = JSON.stringify(subscription);
+    await axios
+      .post("http://localhost:8000/api/notification/end-game", body, {
         headers: {
           "Content-Type": "application/json"
         }
