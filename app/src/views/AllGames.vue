@@ -2,12 +2,11 @@
   <div class="allGames">
     <div class="content">
       <gb-heading tag="h1" class="logo"
-      >Dino <img src="../assets/game/zorfiL.gif" alt="Dino"
+        >Dino <img src="../assets/game/zorfiL.gif" alt="Dino"
       /></gb-heading>
       <gb-button class="icon" @click="$router.push('/')" right-icon="home"
-      >Home
-      </gb-button
-      >
+        >Home
+      </gb-button>
       <br />
       <div>
         <h2>My Games :</h2>
@@ -34,9 +33,8 @@
             </ul>
           </div>
           <gb-button @click="$router.push('/room/' + game.code)" class="icon"
-          >See game
-          </gb-button
-          >
+            >See game
+          </gb-button>
         </div>
       </div>
     </div>
@@ -63,7 +61,7 @@ export default {
       let user = await this.$db.user.get({ id: 0 });
       let self = this;
       await axios
-        .post("http://localhost:8000/api/game/readByUser", {
+        .post("https://dino-srv.azurewebsites.net/api/game/readByUser", {
           user: user._id
         })
         .then(response => {
@@ -71,7 +69,7 @@ export default {
         })
         .catch(() => {
           self.error = "Cannot connect to the server";
-          self.$db.game.toArray().then((result) => {
+          self.$db.game.toArray().then(result => {
             self.games = result;
           });
           self.online = false;
@@ -79,9 +77,12 @@ export default {
       let i = 0;
       if (this.online) {
         while (this.games[i]) {
-          const exists = await this.$db.game.get({ "_id": this.games[i]._id });
+          const exists = await this.$db.game.get({ _id: this.games[i]._id });
           if (exists) {
-            await this.$db.game.update({ "_id": this.games[i]._id }, this.games[i]);
+            await this.$db.game.update(
+              { _id: this.games[i]._id },
+              this.games[i]
+            );
           } else {
             await this.$db.game.add(this.games[i]);
           }
