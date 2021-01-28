@@ -39,6 +39,15 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener('fetch', function(event) {
   event.respondWith(fetch(event.request));
+  if (!navigator.onLine) {
+    if (event.request.url ==='http://127.0.0.1:8080/js/chunk-vendors.c5e1e230.js') {
+      event.waitUntil(
+        this.registration.showNotification("Internet",{
+          body: "You are offline",
+        })
+      );
+    }
+  }
 });
 
 //push notif
@@ -46,19 +55,7 @@ self.addEventListener('push', event => {
   const data = event.data.json();
 
   self.registration.showNotification(data.title, {
-    body: 'You have create new game !',
+    body: ' have create new game !',
     icon: 'img/icons/favicon-32x32.png',
   });
-});
-
-self.addEventListener("notificationclick", (event) => {
-  event.preventDefault();
-  event.notification.close();
-  if(event.action){
-      event.waitUntil(self.clients.openWindow(`/?origin=${event.action}`));
-  }
-  else{
-      event.waitUntil(self.clients.openWindow("/?origin=noaction"));
-  }
-  
 });

@@ -73,6 +73,7 @@
 
 <script>
 import axios from "axios";
+import * as Notifications from "../Notifications/index.js";
 export default {
   name: "Home",
   async beforeMount() {
@@ -92,6 +93,7 @@ export default {
       this.username = user.username;
       this.user = user;
     }
+    Notifications.activatePushNotification();
   },
   data() {
     return {
@@ -104,7 +106,7 @@ export default {
         username: null,
         pass_id: null
       },
-      deferredPrompt: null
+      deferredPrompt: null,
     };
   },
   watch: {

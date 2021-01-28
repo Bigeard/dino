@@ -117,7 +117,7 @@ export default class Game {
             this.players.map(e => e.dead).filter(e => e === false).length === 1
           ) {
             this.closeDialogWin = true;
-            Notifications.triggerPushNotification().catch(error => console.error(error));
+            Notifications.triggerPushNotification();
             console.log(this.actionPlayer.name + " WIN !!!");
           }
         }
