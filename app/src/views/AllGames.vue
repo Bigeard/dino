@@ -2,11 +2,13 @@
   <div class="allGames">
     <div class="content">
       <gb-heading tag="h1" class="logo"
-        >Dino <img src="../assets/game/zorfiL.gif" alt="Dino"
+      >Dino <img src="../assets/game/zorfiL.gif" alt="Dino"
       /></gb-heading>
       <gb-button class="icon" @click="$router.push('/')" right-icon="home"
-        >Home </gb-button
-      ><br />
+      >Home
+      </gb-button
+      >
+      <br />
       <div>
         <h2>My Games :</h2>
         <div
@@ -16,8 +18,8 @@
         >
           <p>Name : {{ game.name }}</p>
           <p>Code : {{ game.code }}</p>
-          <p>Created by : {{ game.created_at }}</p>
-          <p>Update at : {{ game.update_at }}</p>
+          <p>Created by : {{ game.createdAt }}</p>
+          <p>Update at : {{ game.updatedAt }}</p>
           <p>Status : {{ game.status }}</p>
           <gb-badge>Players : {{ game.players.length }} / 5</gb-badge>
           <div class="player_list">
@@ -31,8 +33,9 @@
               </li>
             </ul>
           </div>
-          <gb-button @click="$router.push('/game/' + game.code)" class="icon"
-            >See game</gb-button
+          <gb-button @click="$router.push('/room/' + game.code)" class="icon"
+          >See game
+          </gb-button
           >
         </div>
       </div>
@@ -41,20 +44,50 @@
 </template>
 <script>
 /* eslint-disable */
+import axios from "axios";
+
 export default {
   name: "AllGames",
   async beforeMount() {
-    this.games = await this.$db.game.toArray();
+    this.findGames();
   },
   data() {
     return {
-      games: []
+      games: [],
+      error: "",
+      online: true
     };
   },
   methods: {
     async findGames() {
-      const games = await this.$db.game.toArray();
-      return games;
+      let user = await this.$db.user.get({ id: 0 });
+      let self = this;
+      await axios
+        .post("http://localhost:8000/api/game/readByUser", {
+          user: user._id
+        })
+        .then(response => {
+          self.games = response.data;
+        })
+        .catch(() => {
+          self.error = "Cannot connect to the server";
+          self.$db.game.toArray().then((result) => {
+            self.games = result;
+          });
+          self.online = false;
+        });
+      let i = 0;
+      if (this.online) {
+        while (this.games[i]) {
+          const exists = await this.$db.game.get({ "_id": this.games[i]._id });
+          if (exists) {
+            await this.$db.game.update({ "_id": this.games[i]._id }, this.games[i]);
+          } else {
+            await this.$db.game.add(this.games[i]);
+          }
+          i++;
+        }
+      }
     }
   }
 };
@@ -114,6 +147,7 @@ export default {
     width: 100%;
     display: flex;
     align-items: flex-start;
+
     .players {
       max-width: 321px;
       height: 110px;
@@ -125,6 +159,7 @@ export default {
       text-align: left;
       padding: 0 20px;
       margin: 10px auto;
+
       li {
         height: 48px;
         display: flex;
