@@ -203,7 +203,7 @@ export default class Game {
         name: this.name,
         map: this.map,
         players: this.players,
-        closeDialogWin = this.closeDialogWin
+        closeDialogWin: this.closeDialogWin
       });
     } else if (this.map[y][x].name === "Player") {
       // Click on Player
