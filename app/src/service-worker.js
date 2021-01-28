@@ -103,10 +103,10 @@ const getResponse = async req => {
   if (response) {
     return response;
   } else {
-    if (req.url === "http://localhost:8000/api/game/readByCode") {
+    if (req.url === "https://dino-srv.azurewebsites.net/api/game/readByCode") {
       const game = await get("game", "aaaa-code");
       return new Response(JSON.stringify(game));
-    } else if (req.url === "http://localhost:8000/api/game/action") {
+    } else if (req.url === "https://dino-srv.azurewebsites.net/api/game/action") {
       add("action", {
         id: Date.now(),
         body: await req.json(),
