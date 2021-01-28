@@ -226,7 +226,6 @@ export default {
       axios
         .post("https://dino-srv.azurewebsites.net/api/game/create", passId)
         .then(async response => {
-          notifications.activatePushNotification();
           this.$router.push("/room/" + response.data.code);
           self.waitCreate = false;
         })

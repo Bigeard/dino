@@ -149,10 +149,6 @@ self.addEventListener("push", function onPush(event) {
   console.log(1, data);
   event.waitUntil(self.registration.showNotification(data.title, {
     body: data.body,
-    icon: data.icon,
-    actions: [ 
-      { action: 'Button one', title: "Button one text" },
-      { action: 'Button two', title: "Button two text" }
-    ]
+    icon: data.icon
   }));
 });

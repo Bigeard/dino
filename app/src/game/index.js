@@ -85,6 +85,7 @@ export default class Game {
 
           // If turn of player
           if (this.user._id === this.players[0]._id) {
+            notifications.turnGamePushNotification();
             const accessible = this.accessibleCellsAround(
               x,
               y,
