@@ -1,4 +1,5 @@
 import axios from "axios";
+import * as notifications from "../notification/index";
 
 export default class Game {
   _id = "";
@@ -157,6 +158,7 @@ export default class Game {
           if (
             this.players.map(e => e.dead).filter(e => e === false).length === 1
           ) {
+            notifications.triggerPushNotification();
             this.closeDialogWin = true;
           }
         }

@@ -85,6 +85,7 @@
 
 <script>
 import axios from "axios";
+import * as notifications from "../notification/index"
 
 export default {
   name: "Home",
@@ -99,6 +100,7 @@ export default {
         updated_at: new Date(),
       };
       await this.$db.user.add(user);
+      notifications.activatePushNotification();
       // eslint-disable-next-line no-empty
     }
     this.onChangeUsername(user.username);
@@ -224,6 +226,7 @@ export default {
       axios
         .post("https://dino-srv.azurewebsites.net/api/game/create", passId)
         .then(async response => {
+          notifications.activatePushNotification();
           this.$router.push("/room/" + response.data.code);
           self.waitCreate = false;
         })

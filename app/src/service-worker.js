@@ -132,4 +132,27 @@ self.addEventListener("install", event => {
 
 self.addEventListener("fetch", event => {
   event.respondWith(getResponse(event.request));
+  if (!navigator.onLine) {
+    if (event.request.url ==='http://127.0.0.1:8080/js/chunk-vendors.c5e1e230.js') {
+      event.waitUntil(
+        this.registration.showNotification("Internet",{
+          body: "You are offline",
+        })
+      );
+    }
+  }
+});
+
+//push notif
+self.addEventListener("push", function onPush(event) {
+  const data = event.data.json()
+  console.log(1, data);
+  event.waitUntil(self.registration.showNotification(data.title, {
+    body: data.body,
+    icon: data.icon,
+    actions: [ 
+      { action: 'Button one', title: "Button one text" },
+      { action: 'Button two', title: "Button two text" }
+    ]
+  }));
 });

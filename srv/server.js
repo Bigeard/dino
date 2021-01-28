@@ -1,6 +1,8 @@
+require('dotenv').config({ path: 'variables.env' });
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -40,11 +42,16 @@ db.mongoose
 //routes
 require("./app/routes/user.routes")(app);
 require("./app/routes/game.routes")(app);
+require("./app/routes/notification.routes")(app);
+
 
 // simple route
 app.get("/", (_, res) => {
   res.json({ message: "dino-game.tech 's API" });
 });
+
+//------- notif -------
+app.use(express.static(path.join(__dirname, '../app')));
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
