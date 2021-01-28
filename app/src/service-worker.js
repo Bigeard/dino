@@ -66,6 +66,7 @@ const add = (tab, val) => {
       const tran = db.transaction([tab], "readwrite");
       const store = tran.objectStore(tab);
       store.add(val);
+      resolve();
     };
   });
 };

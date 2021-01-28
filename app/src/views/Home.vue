@@ -64,6 +64,7 @@
             :info="info"
             :error="error"
             :status="status"
+            @submit="checkUsername"
           />
           <gb-button
             @click="checkUsername"
