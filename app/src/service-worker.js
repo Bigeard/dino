@@ -66,8 +66,6 @@ const add = (tab, val) => {
       const tran = db.transaction([tab], "readwrite");
       const store = tran.objectStore(tab);
       store.add(val);
-      // const cursorRequest = store.add(val);
-      // cursorRequest.onsuccess = e => resolve(e.target.result);
     };
   });
 };
@@ -103,10 +101,14 @@ const getResponse = async req => {
   if (response) {
     return response;
   } else {
-    if (req.url === "https://dino-srv.azurewebsites.net/api/game/readByCode") {
-      const game = await get("game", "aaaa-code");
+    console.log(navigator.onLine);
+    if (req.url === "https://dino-srv.azurewebsites.net/api/game/readByCode" && !navigator.onLine) {
+      console.log("api/game/readByCode");
+      const val = await req.json()
+      const game = await get("game", val.code);
       return new Response(JSON.stringify(game));
-    } else if (req.url === "https://dino-srv.azurewebsites.net/api/game/action") {
+    } else if (req.url === "https://dino-srv.azurewebsites.net/api/game/action" && !navigator.onLine) {
+      console.log("api/game/action");
       add("action", {
         id: Date.now(),
         body: await req.json(),

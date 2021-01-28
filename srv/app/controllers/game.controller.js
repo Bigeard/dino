@@ -182,7 +182,7 @@ exports.action = async (req, res) => {
 
   // Action Player
   if (game.map[y][x].name === "Player") {
-    // Calcule domage infliged
+    // Calcule damage infliged
     const totalDamage = calcTotalDamage(player.obj);
     game.map[y][x].obj.stat.health =
       game.map[y][x].obj.stat.health - totalDamage;
@@ -194,23 +194,23 @@ exports.action = async (req, res) => {
         .indexOf(game.map[y][x].obj.name);
 
       if (index > -1) game.players[index].dead = true;
-    }
 
-    game.map[y][x] = {
-      name: "Ground",
-      x: x,
-      y: y,
-      items: [],
-      obstacle: false,
-      view_distance: null,
-    };
+      game.map[y][x] = {
+        name: "Ground",
+        x: x,
+        y: y,
+        items: [],
+        obstacle: false,
+        view_distance: null,
+      };
 
-    // If he is the last player, he has won!
-    if (
-      game.players.map((e) => e.dead).filter((e) => e === false).length === 1
-    ) {
-      console.log(player.name + " WIN !!!");
-      return res.send({ message: player.name + " WIN !!!" });
+      // If he is the last player, he has won!
+      if (
+        game.players.map((e) => e.dead).filter((e) => e === false).length === 1
+      ) {
+        console.log(player.name + " WIN !!!");
+        return res.send({ message: player.name + " WIN !!!" });
+      }
     }
   } else {
     // Player change position
@@ -238,7 +238,11 @@ exports.action = async (req, res) => {
 findPlayerInTheMap = (game, user_id) => {
   for (let y = 0; y < game.map.length; y++) {
     for (let x = 0; x < game.map.length; x++) {
-      if (game.map[y][x].obj && game.map[y][x].obj._id && game.map[y][x].obj._id.toString() == user_id) {
+      if (
+        game.map[y][x].obj &&
+        game.map[y][x].obj._id &&
+        game.map[y][x].obj._id.toString() == user_id
+      ) {
         return game.map[y][x];
       }
     }
@@ -301,6 +305,7 @@ accessibleCellsAround = (game, x, y, move, existingSet) => {
 };
 
 cellIsWalkable = (game, x, y) => {
-  if (x < 0 || x >= game.map[0].length || y < 0 || y >= game.map.length) return false;
+  if (x < 0 || x >= game.map[0].length || y < 0 || y >= game.map.length)
+    return false;
   return !game.map[y][x].obstacle;
 };
