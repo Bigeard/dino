@@ -6,6 +6,11 @@
             "statusCode": 200
         },
         {
+            "route": "/game",
+            "serve": "/index.html",
+            "statusCode": 200
+        },
+        {
             "route": "/game/*",
             "serve": "/index.html",
             "statusCode": 200

@@ -19,7 +19,6 @@ export default class Game {
   constructor(vue) {
     console.log("Start Game !");
     this.loadGame(vue);
-    this.centerToUserPlayer(vue);
   }
 
   /**
@@ -50,6 +49,7 @@ export default class Game {
     } else {
       vue.$router.push("/error");
     }
+    this.centerToUserPlayer(vue);
   }
 
   /**
@@ -59,17 +59,30 @@ export default class Game {
   async centerToUserPlayer(vue) {
     this.user = await vue.$db.user.get({ id: 0 });
     for (let y = 0; y < this.map.length; y++) {
-      for (let x = 0; x < this.map.length; x++) {
-        if (
-          this.map[y][x].obj &&
-          this.map[y][x].obj.name === this.user.username
-        ) {
+      for (let x = 0; x < this.map[0].length; x++) {
+        if (this.map[y][x].obj && this.map[y][x].obj._id === this.user._id) {
+          // Center player
           const nodePlayer = document.querySelector(`[x="${x}"][y="${y}"]`);
           nodePlayer.scrollIntoView({
             behavior: "smooth",
             block: "center",
             inline: "center"
           });
+
+          // If turn of player
+          if (this.user._id === this.players[0]._id) {
+            const accessible = this.accessibleCellsAround(
+              x,
+              y,
+              this.map[y][x].obj.stat.move
+            );
+            accessible.forEach(e => {
+              if (!e.obj || e.obj.name != this.map[y][x].obj.name) {
+                this.map[e.y][e.x].view_distance = "Distance";
+              }
+            });
+            this.actionPlayer = this.map[y][x];
+          }
         }
       }
     }
@@ -117,9 +130,7 @@ export default class Game {
             .map(e => e.name)
             .indexOf(this.map[y][x].obj.name);
 
-          if (index > -1) {
-            this.players[index].dead = true;
-          }
+          if (index > -1) this.players[index].dead = true;
 
           this.map[y][x] = {
             name: "Ground",
