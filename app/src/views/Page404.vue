@@ -1,6 +1,7 @@
 <template>
   <div class="page404">
     <div class="content">
+      <img src="../assets/game/zorfiL_dead.png" alt="Dino Dead" />
       <gb-heading tag="h1" class="logo">Not Found !</gb-heading>
       <!-- Navigation -->
       <div class="nav">
@@ -24,6 +25,10 @@ export default {
   align-items: center;
   justify-content: center;
   height: 100vh;
+
+  img {
+    width: 200px;
+  }
 
   .error_valid,
   .warning_valid {

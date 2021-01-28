@@ -1,4 +1,3 @@
-import { items } from "./data/items";
 import axios from "axios";
 
 export default class Game {
@@ -8,7 +7,7 @@ export default class Game {
   map = [];
   actionPlayer = null;
   select = null;
-  items = items;
+  items = [];
   players = [];
   user = null;
   width = 20;
@@ -136,7 +135,6 @@ export default class Game {
             name: "Ground",
             x: x,
             y: y,
-            items: [],
             obstacle: false,
             view_distance: null
           };

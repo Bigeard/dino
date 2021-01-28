@@ -20,6 +20,9 @@ module.exports = (mongoose) => {
         type: String,
         required: true,
       },
+      closeDialogWin: {
+        type: Boolean,
+      },
     },
     { timestamps: true }
   );
