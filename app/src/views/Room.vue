@@ -384,7 +384,7 @@ export default {
     align-items: flex-start;
     .players {
       max-width: 321px;
-      height: 110px;
+      min-height: 110px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-around;
@@ -400,6 +400,7 @@ export default {
         align-items: center;
         border-radius: 25px;
         padding-right: 10px;
+        margin-bottom: 10px;
       }
     }
   }

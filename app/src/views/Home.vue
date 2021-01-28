@@ -33,10 +33,10 @@
           label="Search Game !"
           placeholder="Enter the code..."
           v-model="code_game"
-          :disabled="!user.pass_id"
+          :disabled="!user.pass_id || !online"
         />
         <gb-button
-          :disabled="!user.pass_id || waitCreate"
+          :disabled="!user.pass_id || waitCreate || !online"
           @click="creatNewGame()"
           right-icon="add"
         >
@@ -95,7 +95,7 @@ export default {
         _id: null,
         username: "",
         pass_id: null,
-        updated_at: new Date()
+        updated_at: new Date(),
       };
       await this.$db.user.add(user);
       // eslint-disable-next-line no-empty
@@ -105,6 +105,8 @@ export default {
       this.username = user.username;
       this.user = user;
     }
+    window.addEventListener('online', () => this.online = true);
+    window.addEventListener('offline',  () => this.online = false);
   },
   data() {
     return {
@@ -120,7 +122,8 @@ export default {
         username: null,
         pass_id: null
       },
-      deferredPrompt: null
+      deferredPrompt: null,
+      online: true
     };
   },
   watch: {

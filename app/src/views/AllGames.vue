@@ -17,9 +17,10 @@
         >
           <p>Name : {{ game.name }}</p>
           <p>Code : {{ game.code }}</p>
-          <p>Created by : {{ game.createdAt }}</p>
-          <p>Update at : {{ game.updatedAt }}</p>
-          <p>Status : {{ game.status }}</p>
+          <p>Owner : {{ game.players[0].name }}</p>
+          <p>Created at : {{ dateToLisible(game.createdAt) }}</p>
+          <p>Update at : {{ dateToLisible(game.updatedAt) }}</p>
+          <p>Status : {{ splitState(game.status) }}</p>
           <gb-badge>Players : {{ game.players.length }} / 5</gb-badge>
           <div class="player_list">
             <ul class="players">
@@ -89,6 +90,12 @@ export default {
           i++;
         }
       }
+    },
+    splitState(status){
+      return status.replace('_', ' ');
+    },
+    dateToLisible(date){
+      return date.replace('T', ' ').replace(/\.\d{3}Z/,'');
     }
   }
 };
@@ -123,15 +130,15 @@ export default {
     text-align: center;
   }
 
-  .winner {
+  .win {
     background-color: rgb(24, 133, 24);
   }
 
-  .looser {
+  .loose {
     background-color: #ac3333;
   }
 
-  .inProgress {
+  .in_progress, .your_turn {
     background-color: #3f536e;
   }
 
@@ -151,7 +158,7 @@ export default {
 
     .players {
       max-width: 321px;
-      height: 110px;
+      min-height: 110px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-around;
@@ -168,6 +175,7 @@ export default {
         align-items: center;
         border-radius: 25px;
         padding-right: 10px;
+        margin-bottom: 10px;
       }
     }
   }
