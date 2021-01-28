@@ -12,6 +12,9 @@ module.exports = (app) => {
   // Retrieve a single game with code
   router.post("/readByCode", game.findByCode);
 
+  // Retrieve all games of a user
+  router.post("/readByUser", game.findByUser);
+
   // Update a game with code
   router.post("/update", game.update);
 

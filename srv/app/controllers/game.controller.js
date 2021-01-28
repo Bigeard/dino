@@ -1,16 +1,30 @@
 const { v4: uuidv4 } = require("uuid");
 const db = require("../models");
+const mongoose = require('mongoose')
 const { generateMap, addPlayer } = require("../tools/game/lib");
 const items = require("../tools/game/data/items");
 const userController = require("./user.controller.js");
 const GameDB = db.game;
 const UserDB = db.user;
 
+// Find all the Games of a user
+exports.findByUser = (req, res, sendData) => {
+  const user = req.body.user;
+  if (!user) res.status(500).send({ message: "Missing data" });
+  return GameDB.find({ "players._id": mongoose.Types.ObjectId(user)})
+    .then((data) => {
+      if (!data) res.status(404).send({ message: "Games with this user can't be found..." });
+      else return sendData ? res.send(data) : data;
+    })
+    .catch((_) => {
+      res.status(500).send({ message: "Error server..." });
+    });
+};
+
 // Find a single Game with a code
 exports.findByCode = (req, res, sendData) => {
   const code = req.body.code;
   if (!code) res.status(500).send({ message: "Missing data" });
-  // No validation because it's a GET request
   return GameDB.findOne({ code: code })
     .then((data) => {
       if (!data) res.status(404).send({ message: "Not found game..." });
