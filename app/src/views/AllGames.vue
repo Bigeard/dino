@@ -12,7 +12,7 @@
         <h2>My Games :</h2>
         <div
           :class="'card ' + game.status"
-          v-for="game in games"
+          v-for="game in orderedGames"
           :key="game.id"
         >
           <p>Name : {{ game.name }}</p>
@@ -56,6 +56,11 @@ export default {
       error: "",
       online: true
     };
+  },
+  computed: {
+    orderedGames: function() {
+      return _.orderBy(this.games, 'updatedAt', 'desc')
+    }
   },
   methods: {
     async findGames() {

@@ -11,7 +11,7 @@ const UserDB = db.user;
 exports.findByUser = (req, res, sendData) => {
   const user = req.body.user;
   if (!user) res.status(500).send({ message: "Missing data" });
-  return GameDB.find({ "players._id": mongoose.Types.ObjectId(user)})
+  return GameDB.find({ "players._id": mongoose.Types.ObjectId(user)}).where('status').ne("new_game")
     .then((data) => {
       if (!data) res.status(404).send({ message: "Games with this user can't be found..." });
       else return sendData ? res.send(data) : data;
