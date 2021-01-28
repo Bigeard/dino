@@ -168,7 +168,6 @@ exports.action = async (req, res) => {
   const player = findPlayerInTheMap(game, user._id);
   console.log("Game:", game._id);
   console.log("Player:", player.obj._id, player.x, player.y);
-  console.log("Action:", x, y);
 
   if (
     !checkIfAccessible(game, player.x, player.y, player.obj.stat.move, x, y)
@@ -208,8 +207,9 @@ exports.action = async (req, res) => {
       if (
         game.players.map((e) => e.dead).filter((e) => e === false).length === 1
       ) {
-        console.log(player.name + " WIN !!!");
-        return res.send({ message: player.name + " WIN !!!" });
+        game.closeDialogWin = true;
+        await this.updateByCode(code, game);
+        return res.send(game);
       }
     }
   } else {

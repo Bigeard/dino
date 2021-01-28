@@ -66,6 +66,7 @@ export default {
   display: flex;
 
   .content {
+    width: 360px;
     border: 1px solid #3f536e;
     border-radius: 8px;
     background-color: #171e29;

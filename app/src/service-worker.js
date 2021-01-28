@@ -101,14 +101,17 @@ const getResponse = async req => {
   if (response) {
     return response;
   } else {
-    console.log(navigator.onLine);
-    if (req.url === "https://dino-srv.azurewebsites.net/api/game/readByCode" && !navigator.onLine) {
-      console.log("api/game/readByCode");
-      const val = await req.json()
+    if (
+      req.url === "https://dino-srv.azurewebsites.net/api/game/readByCode" &&
+      !navigator.onLine
+    ) {
+      const val = await req.json();
       const game = await get("game", val.code);
       return new Response(JSON.stringify(game));
-    } else if (req.url === "https://dino-srv.azurewebsites.net/api/game/action" && !navigator.onLine) {
-      console.log("api/game/action");
+    } else if (
+      req.url === "https://dino-srv.azurewebsites.net/api/game/action" &&
+      !navigator.onLine
+    ) {
       add("action", {
         id: Date.now(),
         body: await req.json(),

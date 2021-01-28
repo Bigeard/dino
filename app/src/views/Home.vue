@@ -6,7 +6,7 @@
       /></gb-heading>
       <!-- Download button -->
       <div v-if="deferredPrompt">
-        <gb-heading tag="h5">Install app :</gb-heading>
+        <gb-heading tag="h2">Install Application</gb-heading>
         <div
           @click="install"
           v-if="deferredPrompt"
@@ -28,7 +28,7 @@
         </div>
       </div>
       <!-- Navigation -->
-      <div class="nav">
+      <div class="nav" v-if="user.pass_id">
         <gb-input
           label="Search Game !"
           placeholder="Enter the code..."
@@ -73,10 +73,10 @@
             Validate
           </gb-button>
         </div>
-        <p v-if="user.pass_id">
+        <!-- <p v-if="user.pass_id">
           Pass ID :
           <span class="pass_id">{{ user.pass_id }}</span>
-        </p>
+        </p> -->
       </div>
     </div>
   </div>
@@ -245,6 +245,7 @@ export default {
   }
 
   .content {
+    width: 360px;
     border: 1px solid #3f536e;
     border-radius: 8px;
     background-color: #171e29;
@@ -266,7 +267,7 @@ export default {
   .username {
     display: flex;
     align-items: flex-end;
-    margin-bottom: 30px;
+    // margin-bottom: 30px;
 
     .gb-field-input {
       width: 100%;
@@ -305,6 +306,7 @@ export default {
     cursor: pointer;
     overflow: hidden;
     transition: all 0.2s ease;
+    margin-top: 10px;
   }
   .btn-circle-download:after {
     content: "";
