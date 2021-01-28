@@ -36,7 +36,7 @@
           :disabled="!user.pass_id"
         />
         <gb-button
-          :disabled="!user.pass_id"
+          :disabled="!user.pass_id || waitCreate"
           @click="creatNewGame()"
           right-icon="add"
         >
@@ -65,7 +65,11 @@
             :error="error"
             :status="status"
           />
-          <gb-button @click="checkUsername" :class="status + '_valid'">
+          <gb-button
+            @click="checkUsername"
+            :class="status + '_valid'"
+            :disabled="waitName"
+          >
             Validate
           </gb-button>
         </div>
@@ -108,6 +112,8 @@ export default {
       username: null,
       info: null,
       error: null,
+      waitCreate: false,
+      waitName: false,
       status: "normal",
       user: {
         _id: null,
@@ -163,6 +169,7 @@ export default {
       }
     },
     async checkUsername() {
+      this.waitName = true;
       if (this.status === "normal") {
         let user = await this.$db.user.get({ id: 0 });
         var self = this;
@@ -194,6 +201,7 @@ export default {
         }
         await this.$db.user.update(0, user);
         this.user = user;
+        this.waitName = false;
       }
     },
     async install() {
@@ -204,6 +212,8 @@ export default {
       this.deferredPrompt.prompt();
     },
     async creatNewGame() {
+      this.waitCreate = true;
+      const self = this;
       const passId = {
         passId: this.user.pass_id
       };
@@ -211,9 +221,11 @@ export default {
         .post("https://dino-srv.azurewebsites.net/api/game/create", passId)
         .then(async response => {
           this.$router.push("/room/" + response.data.code);
+          self.waitCreate = false;
         })
         .catch(error => {
           console.error("There was an error!", error);
+          self.waitCreate = false;
         });
     }
   }
