@@ -2,12 +2,17 @@
   <div class="home">
     <div class="content">
       <gb-heading tag="h1" class="logo"
-      >Dino <img src="../assets/game/zorfiL.gif" alt="Dino"
+        >Dino <img src="../assets/game/zorfiL.gif" alt="Dino"
       /></gb-heading>
       <!-- Download button -->
       <div v-if="deferredPrompt">
         <gb-heading tag="h5">Install app :</gb-heading>
-        <div @click="install"  v-if="deferredPrompt" class="btn-circle-download" id="btn-download">
+        <div
+          @click="install"
+          v-if="deferredPrompt"
+          class="btn-circle-download"
+          id="btn-download"
+        >
           <svg id="arrow" width="14px" height="20px" viewBox="17 14 14 20">
             <path d="M24,15 L24,32"></path>
             <polyline points="30 27 24 33 18 27"></polyline>
@@ -15,8 +20,10 @@
           <svg id="check" width="21px" height="15px" viewBox="13 17 21 15">
             <polyline points="32.5 18.5 20 31 14.5 25.5"></polyline>
           </svg>
-          <svg  id="border" width="48px" height="48px" viewBox="0 0 48 48">
-            <path d="M24,1 L24,1 L24,1 C36.7025492,1 47,11.2974508 47,24 L47,24 L47,24 C47,36.7025492 36.7025492,47 24,47 L24,47 L24,47 C11.2974508,47 1,36.7025492 1,24 L1,24 L1,24 C1,11.2974508 11.2974508,1 24,1 L24,1 Z"></path>
+          <svg id="border" width="48px" height="48px" viewBox="0 0 48 48">
+            <path
+              d="M24,1 L24,1 L24,1 C36.7025492,1 47,11.2974508 47,24 L47,24 L47,24 C47,36.7025492 36.7025492,47 24,47 L24,47 L24,47 C11.2974508,47 1,36.7025492 1,24 L1,24 L1,24 C1,11.2974508 11.2974508,1 24,1 L24,1 Z"
+            ></path>
           </svg>
         </div>
       </div>
@@ -30,7 +37,7 @@
         />
         <gb-button
           :disabled="!user.pass_id"
-          @click="$router.push('/room')"
+          @click="creatNewGame()"
           right-icon="add"
         >
           New Game
@@ -81,6 +88,7 @@ export default {
     if (user === undefined) {
       user = {
         id: 0,
+        _id: null,
         username: "",
         pass_id: null,
         updated_at: new Date()
@@ -102,6 +110,7 @@ export default {
       error: null,
       status: "normal",
       user: {
+        _id: null,
         username: null,
         pass_id: null
       },
@@ -110,7 +119,7 @@ export default {
   },
   watch: {
     code_game(v) {
-      if (v.length > 8) {
+      if (v.length > 35) {
         this.$router.push("/room/" + v);
       }
     },
@@ -144,7 +153,7 @@ export default {
         this.info = null;
       } else if (!/^[\w.]*$/.test(v)) {
         this.error =
-          "you can only use the following characters: \"A-z\" \"0-9\" \"_\"";
+          'you can only use the following characters: "A-z" "0-9" "_"';
         this.status = "error";
         this.info = null;
       } else {
@@ -158,24 +167,31 @@ export default {
         let user = await this.$db.user.get({ id: 0 });
         var self = this;
         if (!user.pass_id) {
-          await axios.post("http://localhost:8000/api/user/create", {
-            "username": this.username
-          }).then((response) => {
-            user.username = response.data.username;
-            user.pass_id = response.data.passId;
-          }).catch(() => {
-            self.status = "error";
-            self.error = "Cannot connect to the server";
-          });
+          await axios
+            .post("http://localhost:8000/api/user/create", {
+              username: this.username
+            })
+            .then(response => {
+              console.log(5, response);
+              user.username = response.data.username;
+              user.pass_id = response.data.passId;
+              user._id = response.data._id;
+            })
+            .catch(() => {
+              self.status = "error";
+              self.error = "Cannot connect to the server";
+            });
         } else {
           user.username = this.username;
-          await axios.patch("http://localhost:8000/api/user/update", {
-            "username": this.username,
-            "passId": user.pass_id
-          }).catch(() => {
-            self.status = "error";
-            self.error = "Cannot connect to the server";
-          });
+          await axios
+            .patch("http://localhost:8000/api/user/update", {
+              username: this.username,
+              passId: user.pass_id
+            })
+            .catch(() => {
+              self.status = "error";
+              self.error = "Cannot connect to the server";
+            });
         }
         await this.$db.user.update(0, user);
         this.user = user;
@@ -183,10 +199,23 @@ export default {
     },
     async install() {
       document.getElementById("btn-download").classList.add("load");
-      setTimeout(function () {
+      setTimeout(function() {
         document.getElementById("btn-download").classList.add("done");
       }, 1000);
       this.deferredPrompt.prompt();
+    },
+    async creatNewGame() {
+      const passId = {
+        passId: this.user.pass_id
+      };
+      axios
+        .post("http://localhost:8000/api/game/create", passId)
+        .then(async response => {
+          this.$router.push("/room/" + response.data.code);
+        })
+        .catch(error => {
+          console.error("There was an error!", error);
+        });
     }
   }
 };
@@ -261,7 +290,7 @@ export default {
     width: 48px;
     margin: auto;
     border-radius: 100%;
-    background: #E8EAED;
+    background: #e8eaed;
     cursor: pointer;
     overflow: hidden;
     transition: all 0.2s ease;
@@ -272,7 +301,12 @@ export default {
     display: block;
     width: 200%;
     height: 100%;
-    background-image: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0));
+    background-image: linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.25),
+      rgba(255, 255, 255, 0)
+    );
     transform: translateX(-100%);
   }
   .btn-circle-download svg {
@@ -294,7 +328,7 @@ export default {
     position: absolute;
     top: 14px;
     left: 17px;
-    stroke: #9098A9;
+    stroke: #9098a9;
     transition: all 0.2s ease;
   }
   .btn-circle-download svg#check {
@@ -309,22 +343,22 @@ export default {
   }
   .btn-circle-download:hover #arrow path,
   .btn-circle-download:hover #arrow polyline {
-    stroke: #0093EE;
+    stroke: #0093ee;
   }
   .btn-circle-download.load {
     background: rgba(0, 119, 255, 0.2);
   }
   .btn-circle-download.load #arrow path,
   .btn-circle-download.load #arrow polyline {
-    stroke: #0093EE;
+    stroke: #0093ee;
   }
   .btn-circle-download.load #border {
-    stroke: #0093EE;
+    stroke: #0093ee;
     stroke-dasharray: 144;
     stroke-dashoffset: 0;
   }
   .btn-circle-download.done {
-    background: #0093EE;
+    background: #0093ee;
     animation: rubberBand 0.8s;
   }
   .btn-circle-download.done:after {

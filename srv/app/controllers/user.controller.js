@@ -52,8 +52,8 @@ exports.findOne = (req, res) => {
 // Find a single User with a passId
 exports.findByPassId = (req, res, sendData) => {
   const passId = req.params.passId;
-  // No validation because it's a GET request
-  User.findOne({ passId: passId }, "-passId")
+  if (!passId) res.status(404).send({ message: "Not found user..." });
+  return User.findOne({ passId: passId }, "-passId")
     .then((data) => {
       if (!data) res.status(404).send({ message: "Not found user..." });
       else return sendData ? res.send(data) : data;

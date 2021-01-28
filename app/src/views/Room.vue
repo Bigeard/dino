@@ -14,6 +14,13 @@
           Copy
         </gb-button>
       </div>
+      <gb-button
+        class="icon"
+        style="margin-top: 20px"
+        @click="getGame()"
+        right-icon="refresh"
+        >Refresh The Room</gb-button
+      >
       <gb-divider class="divider-custom" />
       <!-- Navigation -->
       <div class="nav">
@@ -26,24 +33,31 @@
             :info="info"
             :error="error"
             :status="status"
+            v-if="user._id === game.owner"
           />
           <gb-button
             @click="checkGamename"
             :class="status + '_valid'"
             right-icon="done"
+            v-if="user._id === game.owner"
           >
             Validate
           </gb-button>
+          <gb-heading tag="h1" style="margin-top: 30px">{{
+            game.name
+          }}</gb-heading>
         </div>
-        <gb-badge>Players : {{ players.length }} / 5</gb-badge>
+
+        <gb-badge>Players : {{ game.players.length }} / 5</gb-badge>
+
         <div class="player_list">
           <ul class="players">
             <li
-              v-for="(player, i) in players"
+              v-for="(player, i) in playersShow"
               :key="i"
               :class="`Player${i + 1}`"
             >
-              <img src="../../public/img/icons/zorfiL.gif" />{{ player }}
+              <img src="../../public/img/icons/zorfiL.gif" />{{ player.name }}
             </li>
           </ul>
         </div>
@@ -53,6 +67,7 @@
           @click="generateNewMap()"
           right-icon="refresh"
           v-model="generateNewMapCount"
+          v-if="user._id === game.owner"
         >
           Generate New Map
         </gb-button>
@@ -79,11 +94,20 @@
             Home
           </gb-button>
           <gb-button
-            :disabled="status !== 'normal' || game.name === ''"
+            :disabled="
+              game.status !== 'new_game' ||
+                game.name === '' ||
+                user._id !== game.owner ||
+                game.players.length < 2 ||
+                game.players.length > 5
+            "
             @click="startGame()"
             right-icon="arrow_forward"
           >
-            Strart Game
+            {{ game.players.length }}
+            {{
+              user._id !== game.owner ? "Wait owner start..." : "Strart Game"
+            }}
           </gb-button>
         </div>
       </div>
@@ -99,30 +123,41 @@
 </template>
 
 <script>
-import { generateMap } from "../game/lib/index";
-import { items } from "../game/data/items";
-
+import axios from "axios";
 export default {
   name: "Room",
+  beforeMount() {
+    this.getGame();
+    this.onChangeGamename(this.gamename);
+  },
   data() {
     return {
-      game: { name: "", code: "666" },
+      user: {
+        username: null,
+        pass_id: null,
+        _id: null
+      },
+      game: {
+        name: "",
+        code: "",
+        map: [],
+        actions: [],
+        players: [],
+        owner: null,
+        status: "new_game"
+      },
       gamename: "",
       width: 20,
       height: 20,
-      players: ["toto_1", "toto_2", "toto_3"],
       numObstacle: 40,
       numItems: 6,
+      playersShow: [],
       info: null,
-      status: "normal",
+      status: "new_game",
       error: null,
       infoClipboard: "",
       generateNewMapCount: 0
     };
-  },
-  beforeMount() {
-    this.generateNewMap();
-    this.onChangeGamename(this.gamename);
   },
   watch: {
     gamename(v) {
@@ -135,15 +170,15 @@ export default {
         this.info = "Please add a username to start playing";
         this.status = "warning";
         this.error = null;
-      } else if (v.length < 3) {
+      } else if (v.length <= 3) {
         this.error = "A minimum of 3 characters is required";
         this.status = "error";
         this.info = null;
-      } else if (v.length > 13) {
+      } else if (v.length >= 24) {
         this.error = "A maximum of 12 characters is required";
         this.status = "error";
         this.info = null;
-      } else if (!/^[\w.]*$/.test(v)) {
+      } else if (!/^[\w. ]*$/.test(v)) {
         this.error =
           'you can only use the following characters: "A-z" "0-9" "_"';
         this.status = "error";
@@ -157,8 +192,26 @@ export default {
     async checkGamename() {
       if (this.status === "normal") {
         this.game.name = this.gamename;
-        this.game.code = this.gamename + "-code";
-        this.game._id = this.gamename + "-code";
+        const update = {
+          passId: this.user.pass_id,
+          code: this.$route.params.code,
+          new_name: this.game.name
+        };
+        axios
+          .post("http://localhost:8000/api/game/update", update)
+          .then(response => {
+            // JSON responses are automatically parsed.
+            this.game.code = response.data.code;
+            this.game.name = response.data.name;
+            this.gamename = response.data.name;
+            this.game.map = response.data.map;
+            this.game.players = response.data.players;
+            this.game.owner = response.data.owner;
+            this.playersShow = response.data.players;
+          })
+          .catch(e => {
+            console.error("There was an error !", e);
+          });
       }
     },
     copyGameCode() {
@@ -175,36 +228,70 @@ export default {
         this.infoClipboard = "";
       }, 3000);
     },
-    async generateNewMap() {
+    async getGame() {
       const user = await this.$db.user.get({ id: 0 });
-      // @TODO Temporary
-      if (this.players.length === 3) {
-        this.players.unshift(user.username);
-      }
-      const { new_map, gen_player } = generateMap(
-        this.width,
-        this.width,
-        this.players,
-        this.numObstacle,
-        this.numItems,
-        items
-      );
-      this.game.map = new_map;
-      this.game.players = gen_player;
-      this.generateNewMapCount++;
+      this.user = user;
+
+      const update = {
+        passId: this.user.pass_id,
+        code: this.$route.params.code
+      };
+      axios
+        .post("http://localhost:8000/api/game/update", update)
+        .then(response => {
+          this.game.code = response.data.code;
+          console.log(response.data.status);
+          if (response.data.status === "in_progress") {
+            this.$router.push("/game/" + this.game.code);
+          }
+          // JSON responses are automatically parsed.
+          this.game.name = response.data.name;
+          this.gamename = response.data.name;
+          this.game.map = response.data.map;
+          this.game.players = response.data.players;
+          this.game.owner = response.data.owner;
+          this.playersShow = response.data.players;
+        })
+        .catch(e => {
+          console.error("There was an error !", e);
+        });
+    },
+    async generateNewMap() {
+      const update = {
+        passId: this.user.pass_id,
+        code: this.$route.params.code,
+        genNewMap: true
+      };
+      axios
+        .post("http://localhost:8000/api/game/update", update)
+        .then(response => {
+          // JSON responses are automatically parsed.
+          this.game.code = response.data.code;
+          this.game.name = response.data.name;
+          this.gamename = response.data.name;
+          this.game.map = response.data.map;
+          this.game.players = response.data.players;
+          this.game.owner = response.data.owner;
+          this.playersShow = response.data.players;
+        })
+        .catch(e => {
+          console.error("There was an error !", e);
+        });
     },
     async startGame() {
-      await this.$db.game.add({
-        _id: this.game._id,
-        name: this.game.name,
-        code: this.game.code,
-        map: this.game.map,
-        players: this.game.players,
-        width: this.width,
-        height: this.height,
-        status: "inProgress"
-      });
-      this.$router.push("/game/" + this.game.code);
+      const update = {
+        passId: this.user.pass_id,
+        code: this.$route.params.code,
+        start: true
+      };
+      axios
+        .post("http://localhost:8000/api/game/update", update)
+        .then(() => {
+          this.$router.push("/game/" + this.game.code);
+        })
+        .catch(e => {
+          console.error("There was an error !", e);
+        });
     }
   }
 };
