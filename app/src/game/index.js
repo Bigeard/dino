@@ -153,12 +153,13 @@ export default class Game {
             obstacle: false,
             view_distance: null
           };
+          
+          notifications.triggerPushNotification();
 
           // If he is the last player, he has won!
           if (
             this.players.map(e => e.dead).filter(e => e === false).length === 1
           ) {
-            notifications.triggerPushNotification();
             this.closeDialogWin = true;
           }
         }
