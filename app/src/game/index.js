@@ -25,11 +25,7 @@ export default class Game {
    * @param {*} vue Vue component
    */
   async loadGame(vue) {
-    // @TODO Change that for dynamic offline online
-    // const game = await vue.$db.game.get({
-    //   code: vue.$route.params.code
-    // });
-    const game = await axios
+    let game = await axios
       .post("https://dino-srv.azurewebsites.net/api/game/readByCode", {
         code: vue.$route.params.code
       })
@@ -39,14 +35,32 @@ export default class Game {
       .catch(error => {
         console.error(error);
       });
-    if (game) {
+
+    if (game && game._id) {
       this._id = game._id;
       this.code = game.code;
       this.name = game.name;
       this.map = game.map;
       this.players = game.players;
+      this.closeDialogWin = game.closeDialogWin;
+      // Update or Create in indexedDB
+      const exist = await vue.$db.game.get({ _id: game._id });
+      if (exist && exist._id)
+        await vue.$db.game.update(this._id, game);
+      else await vue.$db.game.add(game);
     } else {
-      vue.$router.push("/error");
+      // Offline Game
+      const game_db = await vue.$db.game.get({ code: vue.$route.params.code });
+      if (game_db && game_db._id) {
+        this._id = game_db._id;
+        this.code = game_db.code;
+        this.name = game_db.name;
+        this.map = game_db.map;
+        this.players = game_db.players;
+        this.closeDialogWin = game_db.closeDialogWin;
+      } else {
+        vue.$router.push("/error");
+      }
     }
     this.centerToUserPlayer(vue);
   }
@@ -144,7 +158,6 @@ export default class Game {
             this.players.map(e => e.dead).filter(e => e === false).length === 1
           ) {
             this.closeDialogWin = true;
-            console.log(this.actionPlayer.name + " WIN !!!");
           }
         }
       } else {
@@ -180,15 +193,17 @@ export default class Game {
         .catch(error => {
           console.error(error);
         });
-      if (new_game.name) {
+      if (new_game.name && new_game.map && new_game.players) {
         this.name = new_game.name;
         this.map = new_game.map;
         this.players = new_game.players;
+        this.closeDialogWin = new_game.closeDialogWin;
       }
       await vue.$db.game.update(this._id, {
         name: this.name,
         map: this.map,
-        players: this.players
+        players: this.players,
+        closeDialogWin = this.closeDialogWin
       });
     } else if (this.map[y][x].name === "Player") {
       // Click on Player

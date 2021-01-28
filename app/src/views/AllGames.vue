@@ -33,7 +33,7 @@
               </li>
             </ul>
           </div>
-          <gb-button @click="$router.push('/room/' + game.code)" class="icon"
+          <gb-button @click="$router.push('/game/' + game.code)" class="icon"
             >See game
           </gb-button>
         </div>
