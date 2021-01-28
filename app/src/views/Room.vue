@@ -205,7 +205,9 @@ export default {
         status: "inProgress"
       });
       this.$router.push("/game/" + this.game.code);
-      Notifications.triggerPushNotification().catch(error => console.error(error));
+      Notifications.triggerPushNotification().catch(error =>
+        console.error(error)
+      );
     }
   }
 };

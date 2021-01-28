@@ -37,8 +37,8 @@ export async function triggerPushNotification() {
           "Content-Type": "application/json"
         }
       })
-      .catch(_ => {
-        res.status(500).send({ message: "Error server..." });
+      .catch(error => {
+        console.error("There was an error notification !", error);
       });
   } else {
     console.error("Service workers are not supported in this browser");
