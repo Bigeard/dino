@@ -24,7 +24,7 @@ const generateMap = (width, height, players, numObstacle, numItems, items) => {
         x: x,
         y: y,
         obstacle: false,
-        view_distance: null
+        view_distance: null,
       });
     }
   }
@@ -33,28 +33,24 @@ const generateMap = (width, height, players, numObstacle, numItems, items) => {
   let randCell = null;
   let data_players = [];
   for (let p = 0; p < players.length; p++) {
-    randCell = map[randInt(0, height)][randInt(0, width)];
-    if (randCell.name === "Ground") {
-      randCell.id = p;
-      randCell.name = "Player";
-      randCell.obstacle = false;
-      randCell.obj = {
-        _id: Date.now().toString() + Math.floor(Math.random() * 100).toString(),
-        name: players[p],
-        img: "/public/img/icons/zorfiL.gif",
-        dead: false,
-        items: [],
-        numPlayer: p,
-        stat: {
-          health: 40,
-          damage: 4,
-          move: 3
-        }
-      };
-      data_players.push(randCell.obj);
-    } else {
-      generateMap(width, height, players, numObstacle, numItems, items);
-    }
+    randCell = randPosPlayer(map, height, width);
+    randCell.id = p;
+    randCell.name = "Player";
+    randCell.obstacle = false;
+    randCell.obj = {
+      _id: players[p]._id,
+      name: players[p].name,
+      img: "/public/img/icons/zorfiL.gif",
+      dead: false,
+      items: [],
+      numPlayer: p,
+      stat: {
+        health: 40,
+        damage: 4,
+        move: 3,
+      },
+    };
+    data_players.push(randCell.obj);
   }
   players = data_players;
 
@@ -80,4 +76,38 @@ const generateMap = (width, height, players, numObstacle, numItems, items) => {
   return { new_map: map, gen_player: players };
 };
 
-module.exports = { randInt, generateMap };
+const addPlayer = (game, user) => {
+  let randCell = randPosPlayer(game.map, game.map.length, game.map[0].length);
+  randCell.id = game.players.length;
+  randCell.name = "Player";
+  randCell.obstacle = false;
+  randCell.obj = {
+    _id: user._id,
+    name: user.username,
+    img: "/public/img/icons/zorfiL.gif",
+    dead: false,
+    items: [],
+    numPlayer: game.players.length,
+    stat: {
+      health: 40,
+      damage: 4,
+      move: 3,
+    },
+  };
+  game.map[randCell.y][randCell.x] = randCell;
+  game.players.push(randCell.obj);
+  return {
+    new_map: game.map,
+    gen_player: game.players,
+  };
+};
+
+const randPosPlayer = (map, hight, width) => {
+  const p1 = randInt(0, hight);
+  const p2 = randInt(0, width);
+  const randCell = map[p1][p2];
+  if (randCell.name === "Player") randPosPlayer();
+  else return randCell;
+};
+
+module.exports = { generateMap, addPlayer };

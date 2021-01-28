@@ -1,80 +1,16 @@
 const { v4: uuidv4 } = require("uuid");
 const db = require("../models");
-const { generateMap, randInt } = require("../tools/game/lib");
+const { generateMap, addPlayer } = require("../tools/game/lib");
 const items = require("../tools/game/data/items");
-const { user } = require("../models");
 const GameDB = db.game;
 const UserDB = db.user;
-
-const gameObject = {
-  map: [],
-  players: [],
-  generateNewMapCount: 0,
-};
-
-// Create and Save a new Game
-exports.create = async (req, res) => {
-  const passId = req.body.passId;
-  const { new_map, gen_player } = generateMap(20, 20, [], 40, 6, items);
-
-  const curentUserForCreateGame = {
-    id: "",
-    username: "",
-  };
-
-  const game = new GameDB({
-    name: "",
-    code: uuidv4(),
-    map: new_map,
-    actions: [],
-    players: gen_player,
-    owner: "",
-    status: "creating-new-game",
-  });
-
-  // Find User in the database
-  const findUser = await UserDB.findOne({ passId: passId }, "-passId")
-    .then(async (data) => {
-      if (!data) {
-        res.status(404).send({ message: "Not found user..." });
-      } else {
-        curentUserForCreateGame.id = data._id;
-        curentUserForCreateGame.username = data.username;
-
-        game.name = "game of " + data.username;
-        game.players = curentUserForCreateGame;
-        game.owner = data._id;
-
-        // Save Game in the database
-        if (game.name || game.code || game.owner || game.status) {
-          return await game
-            .save(game)
-            .then((data) => res.send(data))
-            .catch((err) => {
-              res.status(500).send({
-                message:
-                  err.message || "Some error occurred while creating the Game.",
-              });
-            });
-        }
-        res.status(500).send({ message: "Data is incomplete!" });
-      }
-      res.status(400).send({ message: "Error server..." });
-    })
-    .catch((error) => {
-      res.status(500).send({ message: error.message || "Error server..." });
-    });
-
-  // Create a Game
-  if (!passId) res.status(404).send({ message: "Not found user..." });
-  return findUser;
-};
 
 // Find a single Game with a code
 exports.findByCode = (req, res, sendData) => {
   const code = req.body.code;
+  if (!code) res.status(500).send({ message: "Missing data" });
   // No validation because it's a GET request
-  GameDB.findOne({ code: code })
+  return GameDB.findOne({ code: code })
     .then((data) => {
       if (!data) res.status(404).send({ message: "Not found game..." });
       else return sendData ? res.send(data) : data;
@@ -84,114 +20,117 @@ exports.findByCode = (req, res, sendData) => {
     });
 };
 
-// Update a Game id in the request
-exports.update = async (req, res) => {
-  const { passIdCurentUser, code, name } = req.body;
+// Update a single Game with a code
+exports.updateByCode = (code, game) => {
+  return GameDB.updateOne({ code: code }, game)
+    .then((data) => {
+      if (!data) res.status(404).send({ message: "Not found game..." });
+      else return data;
+    })
+    .catch((_) => {
+      res.status(500).send({ message: "Error server..." });
+    });
+};
 
-  const user = {
-    _id: "",
-    username: "",
-  };
-
-  const game = {
-    name: "",
-    code: "",
-    map: [],
-    actions: [],
-    players: [],
-    owner: "",
-    status: "game-launched",
-  };
+// Create and Save a new Game
+exports.create = async (req, res) => {
+  const passId = req.body.passId;
+  if (!passId) res.status(404).send({ message: "Not found user..." });
 
   // Find User in the database
-  const findUser = await UserDB.findOne({ passId: passIdCurentUser }, "-passId")
-    .then(async (data) => {
-      if (!data) {
-        res.status(404).send({ message: "Not found user..." });
-      } else {
-        user._id = data._id;
-        user.username = data.username;
-        // Find a single Game with a code
-        return await GameDB.findOne({ code: code })
-          .then(async (data) => {
-            if (!data) {
-              res.status(404).send({ message: "Not found game..." });
-            } else {
-              if (user._id == data.owner) {
-                game.name = name;
-                game.code = data.code;
-                game.map = data.map;
-                game.actions = data.actions;
-                game.players = data.players;
-                game.owner = data.owner;
-                // Update name, status and map of this Game in the database if it is the owner
-                return await GameDB.updateOne(game)
-                  .then(async () => {
-                    // Again find a single Game with a code because the result of update request return status code but not data
-                    return await GameDB.findOne({ code: code })
-                      .then((data) => res.send(data))
-                      .catch((_) => {
-                        res.status(500).send({ message: "Error server..." });
-                      });
-                  })
-                  .catch((err) => {
-                    res.status(500).send({
-                      message:
-                        err.message ||
-                        "Some error occurred while update the Game.",
-                    });
-                  });
-              } else {
-                if (
-                  data.players.length > 0 &&
-                  data.players.length < 6
-                ) {
-                  let filterPlayers = data.players.filter(
-                    (player) =>
-                      player.username == user.username
-                  );
-                  if (filterPlayers.length === 0) {
-                    data.players.push(user);
-                  }
-                }
-                game.name = data.name;
-                game.code = data.code;
-                game.map = data.map;
-                game.actions = data.actions;
-                game.players = data.players;
-                game.owner = data.owner;
-                game.status = data.status;
-                // Update player of this Game in the database if it is not the owner
-                return await GameDB.updateOne(game)
-                  .then(async () => {
-                    // Again find a single Game with a code because the result of update request return status code but not data
-                    return await GameDB.findOne({ code: code })
-                      .then((data) => res.send(data))
-                      .catch((_) => {
-                        res.status(500).send({ message: "Error server..." });
-                      });
-                  })
-                  .catch((err) => {
-                    res.status(500).send({
-                      message:
-                        err.message ||
-                        "Some error occurred while update the Game.",
-                    });
-                  });
-              }
-            }
-          })
-          .catch((_) => {
-            res.status(500).send({ message: "Error server..." });
-          });
-      }
-      res.status(400).send({ message: "Error server..." });
-    })
-    .catch((error) => {
-      res.status(500).send({ message: error.message || "Error server..." });
-    });
+  const user = await UserDB.findOne({ passId: passId }, "-passId").catch((e) =>
+    res.status(500).send({ message: e.message || "Error server..." })
+  );
+  if (!user) return res.status(404).send({ message: "Not found user..." });
 
-  // Update a Game
-  if (!passIdCurentUser) res.status(404).send({ message: "Not found user..." });
-  return findUser;
+  // New game
+  const { new_map, gen_player } = generateMap(
+    20,
+    20,
+    [
+      {
+        _id: user._id,
+        name: user.username,
+      },
+    ],
+    40,
+    6,
+    items
+  );
+  const game = {
+    name: "Game of " + user.username,
+    code: uuidv4(),
+    map: new_map,
+    players: gen_player,
+    owner: user._id,
+    width: 20,
+    height: 20,
+    status: "new_game",
+  };
+
+  // Save Game in the database
+  return await GameDB.create(game)
+    .then((data) => res.send(data))
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while creating the Game.",
+      });
+    });
+};
+
+// Update a Game id in the request
+exports.update = async (req, res) => {
+  const { passId, code, genNewMap, new_name, start } = req.body;
+  if (!passId || !code)
+    return res.status(200).send({ message: "Missing data" });
+
+  // Find User in the database
+  const user = await UserDB.findOne({ passId: passId }, "-passId").catch((e) =>
+    res.status(500).send({ message: e.message || "Error server..." })
+  );
+  if (!user) return res.status(404).send({ message: "Not found user..." });
+  let game = await this.findByCode(req, res);
+  if (!game) return;
+  // Check if game has already started
+  if (game.status !== "new_game") return res.send(game);
+
+  // Update Owner
+  if (game.owner == user._id) {
+    if (genNewMap) {
+      const { new_map, gen_player } = generateMap(
+        20,
+        20,
+        game.players,
+        40,
+        6,
+        items
+      );
+      game.map = new_map;
+      game.players = gen_player;
+    }
+    if (
+      new_name &&
+      new_name.length >= 3 &&
+      new_name.length <= 24 &&
+      /^[\w. ]*$/.test(new_name)
+    ) {
+      game.name = new_name;
+    }
+    if (start && game.players.length >= 2) {
+      game.status = "in_progress";
+    }
+    await this.updateByCode(code, game);
+  } else {
+    // Add player
+    if (
+      game.players.map((e) => e._id).indexOf(user._id) < 0 &&
+      game.players.length < 5
+    ) {
+      const { new_map, gen_player } = addPlayer(game, user);
+      game.map = new_map;
+      game.players = gen_player;
+      await this.updateByCode(code, game);
+    }
+  }
+  res.send(game);
 };

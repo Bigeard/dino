@@ -4,7 +4,7 @@ module.exports = (app) => {
   var router = require("express").Router();
 
   // Create a new game
-  router.post("/create/", game.create);
+  router.post("/create", game.create);
 
   // Retrieve all games
   //router.get("/", game.findAll);
@@ -16,10 +16,10 @@ module.exports = (app) => {
   //router.get("/:id", game.findOne);
 
   // Retrieve a single game with code
-  router.post("/readByCode/", game.findByCode);
+  router.post("/readByCode", game.findByCode);
 
   // Update a game with code
-  router.patch("/update/", game.update);
+  router.post("/update", game.update);
 
   app.use("/api/game", router);
 };
