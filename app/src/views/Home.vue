@@ -96,7 +96,7 @@ export default {
         _id: null,
         username: "",
         pass_id: null,
-        updated_at: new Date(),
+        updated_at: new Date()
       };
       await this.$db.user.add(user);
       // eslint-disable-next-line no-empty
@@ -106,8 +106,8 @@ export default {
       this.username = user.username;
       this.user = user;
     }
-    window.addEventListener('online', () => this.online = true);
-    window.addEventListener('offline',  () => this.online = false);
+    window.addEventListener("online", () => (this.online = true));
+    window.addEventListener("offline", () => (this.online = false));
   },
   data() {
     return {

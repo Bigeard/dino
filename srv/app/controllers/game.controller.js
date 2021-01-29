@@ -1,6 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 const db = require("../models");
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 const { generateMap, addPlayer } = require("../tools/game/lib");
 const items = require("../tools/game/data/items");
 const userController = require("./user.controller.js");
@@ -11,9 +11,14 @@ const UserDB = db.user;
 exports.findByUser = (req, res, sendData) => {
   const user = req.body.user;
   if (!user) res.status(500).send({ message: "Missing data" });
-  return GameDB.find({ "players._id": mongoose.Types.ObjectId(user)}).where('status').ne("new_game")
+  return GameDB.find({ "players._id": mongoose.Types.ObjectId(user) })
+    .where("status")
+    .ne("new_game")
     .then((data) => {
-      if (!data) res.status(404).send({ message: "Games with this user can't be found..." });
+      if (!data)
+        res
+          .status(404)
+          .send({ message: "Games with this user can't be found..." });
       else return sendData ? res.send(data) : data;
     })
     .catch((_) => {
@@ -192,6 +197,7 @@ exports.action = async (req, res) => {
         game.players[0].name,
     });
   }
+  game.damage = null;
 
   // Action Player
   if (game.map[y][x].name === "Player") {
@@ -200,13 +206,20 @@ exports.action = async (req, res) => {
     game.map[y][x].obj.stat.health =
       game.map[y][x].obj.stat.health - totalDamage;
 
+    const index = game.players
+      .map((e) => e.name)
+      .indexOf(game.map[y][x].obj.name);
+
+    game.damage.x = x;
+    game.damage.x = y;
+    game.players[index] = game.map[y][x].obj;
+
     // Check if player is dead
     if (game.map[y][x].obj.stat.health <= 0) {
-      const index = game.players
-        .map((e) => e.name)
-        .indexOf(game.map[y][x].obj.name);
-
-      if (index > -1) game.players[index].dead = true;
+      if (index > -1) {
+        game.players[index].dead = true;
+        game.players[index].health = true;
+      }
 
       game.map[y][x] = {
         name: "Ground",
@@ -222,8 +235,8 @@ exports.action = async (req, res) => {
         game.players.map((e) => e.dead).filter((e) => e === false).length === 1
       ) {
         game.closeDialogWin = true;
-        await this.updateByCode(code, game);
-        return res.send(game);
+        game.win = user._id;
+        game.status = "end game";
       }
     }
   } else {
@@ -240,6 +253,7 @@ exports.action = async (req, res) => {
 
     if (game.map[y][x].name === "Item") {
       player.obj.items.push(game.map[y][x].obj);
+      game.players[0] = player.obj;
     }
     game.map[y][x] = player;
   }

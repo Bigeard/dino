@@ -45,9 +45,14 @@ export default class Game {
       this.closeDialogWin = game.closeDialogWin;
       // Update or Create in indexedDB
       const exist = await vue.$db.game.get({ _id: game._id });
-      if (exist && exist._id)
-        await vue.$db.game.update(this._id, game);
+      if (exist && exist._id) await vue.$db.game.update(this._id, game);
       else await vue.$db.game.add(game);
+
+      if (game.damage.x && game.damage.y) {
+        playerDamage(
+          document.querySelector(`[x="${game.damage.x}"][y="${game.damage.y}"]`)
+        );
+      }
     } else {
       // Offline Game
       const game_db = await vue.$db.game.get({ code: vue.$route.params.code });
@@ -124,26 +129,19 @@ export default class Game {
         this.map[y][x].obj.stat.health =
           this.map[y][x].obj.stat.health - totalDamage;
 
-        // Annimation of total damage
-        e.target.innerHTML = "-" + totalDamage;
-        e.target.style.backgroundImage = "none";
-        e.target.style.fontWeight = "bold";
-        e.target.style.padding = "0";
+        playerDamage(e.target);
 
-        setTimeout(() => {
-          e.target.style.backgroundImage = null;
-          e.target.style.padding = null;
-          e.target.style.fontWeight = null;
-          e.target.innerHTML = "";
-        }, 1000);
+        const index = this.players
+          .map(e => e.name)
+          .indexOf(this.map[y][x].obj.name);
+        this.players[index] = this.map[y][x].obj;
 
         // Detect if the player has no more health
         if (this.map[y][x].obj.stat.health <= 0) {
-          const index = this.players
-            .map(e => e.name)
-            .indexOf(this.map[y][x].obj.name);
-
-          if (index > -1) this.players[index].dead = true;
+          if (index > -1) {
+            this.players[index].dead = true;
+            this.players[index].health = 0;
+          }
 
           this.map[y][x] = {
             name: "Ground",
@@ -281,6 +279,21 @@ export default class Game {
         this.map[y][x].view_distance = null;
       }
     }
+  }
+
+  playerDamage(node) {
+    // Annimation of total damage
+    node.innerHTML = "-" + totalDamage;
+    node.style.backgroundImage = "none";
+    node.style.fontWeight = "bold";
+    node.style.padding = "0";
+
+    setTimeout(() => {
+      node.style.backgroundImage = null;
+      node.style.padding = null;
+      node.style.fontWeight = null;
+      node.innerHTML = "";
+    }, 1000);
   }
 
   changeTurn() {

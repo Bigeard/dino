@@ -23,6 +23,12 @@ module.exports = (mongoose) => {
       closeDialogWin: {
         type: Boolean,
       },
+      win: {
+        type: String,
+      },
+      damage: {
+        type: Object,
+      },
     },
     { timestamps: true }
   );
