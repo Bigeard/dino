@@ -63,6 +63,9 @@ export default {
 
 <style lang="scss">
 .about {
+  padding: 10px;
+  margin-bottom: 180px;
+
   .logo {
     margin-top: 15px;
     font-size: 65px !important;
@@ -82,6 +85,7 @@ export default {
   .info {
     display: flex;
     justify-content: center;
+
     ul {
       margin: auto;
       width: 100%;

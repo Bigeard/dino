@@ -2,7 +2,7 @@
   <div class="home">
     <div class="content">
       <gb-heading tag="h1" class="logo"
-        >Dino <img src="../assets/game/zorfiL.gif" alt="Dino"
+        >Dino <img src="../assets/game/zorfiL.gif" alt="Dino" width="74" height="74"
       /></gb-heading>
       <!-- Download button -->
       <div v-if="deferredPrompt">
@@ -263,7 +263,6 @@ export default {
     margin-bottom: 40px !important;
 
     img {
-      width: 74px;
       margin-bottom: -12px;
     }
   }
