@@ -11,6 +11,29 @@
       <gb-heading tag="h1">Bigeard</gb-heading>
     </div>
 
+    <div class="goal">
+      <gb-heading tag="h2">Goal of the game : </gb-heading>
+      <gb-heading tag="p"
+        >This game is a turn-based battleRoyal. The object of the games is to
+        succeed in being the last survivor.
+      </gb-heading>
+    </div>
+
+    <div class="rules">
+      <gb-heading tag="h2">Rule of the game : </gb-heading>
+      <gb-heading tag="p"
+        >Each player starts with the same amount of health, attack and movement
+        points.<br />
+        To be able to play your turn, you will have to wait for the other
+        players to finish their turn.<br />
+        Each turn, you can either move to a green square, move to a square with
+        an item, or attack a player.<br />
+        At the end of your turn, it must pass to the next player's turn.<br />
+        By collecting items, you will be able to increase your stats and have a
+        better chance of surviving.
+      </gb-heading>
+    </div>
+
     <div class="info">
       <ul>
         <li>
@@ -41,10 +64,10 @@ export default {
 <style lang="scss">
 .about {
   .logo {
-    margin-top: 40px;
+    margin-top: 15px;
     font-size: 65px !important;
     line-height: normal !important;
-    margin-bottom: 40px !important;
+    margin-bottom: 15px !important;
 
     img {
       width: 74px;
