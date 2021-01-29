@@ -47,7 +47,12 @@ export default class Game {
       if (exist && exist._id) await vue.$db.game.update(this._id, game);
       else await vue.$db.game.add(game);
 
-      if (game.damage.x && game.damage.y && game.damage.totalDamage) {
+      if (
+        game.damage &&
+        game.damage.x &&
+        game.damage.y &&
+        game.damage.totalDamage
+      ) {
         this.playerDamage(
           document.querySelector(
             `[x="${game.damage.x}"][y="${game.damage.y}"]`
