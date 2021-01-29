@@ -210,8 +210,11 @@ exports.action = async (req, res) => {
       .map((e) => e.name)
       .indexOf(game.map[y][x].obj.name);
 
-    game.damage.x = x;
-    game.damage.x = y;
+    game.damage = {
+      totalDamage: totalDamage,
+      x: x,
+      y: y,
+    };
     game.players[index] = game.map[y][x].obj;
 
     // Check if player is dead
