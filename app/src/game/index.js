@@ -16,7 +16,6 @@ export default class Game {
   closeDialogInfo = false;
 
   constructor(vue) {
-    console.log("Start Game !");
     this.loadGame(vue);
   }
 
@@ -48,9 +47,12 @@ export default class Game {
       if (exist && exist._id) await vue.$db.game.update(this._id, game);
       else await vue.$db.game.add(game);
 
-      if (game.damage.x && game.damage.y) {
-        playerDamage(
-          document.querySelector(`[x="${game.damage.x}"][y="${game.damage.y}"]`)
+      if (game.damage.x && game.damage.y && game.damage.totalDamage) {
+        this.playerDamage(
+          document.querySelector(
+            `[x="${game.damage.x}"][y="${game.damage.y}"]`
+          ),
+          game.damage.totalDamage
         );
       }
     } else {
@@ -113,8 +115,6 @@ export default class Game {
    */
   async actionGame(vue, x, y, e) {
     this.select = this.map[y][x];
-    console.log(`x: ${x} / y: ${y} - ${this.select.name}: `, this.select);
-
     // if the cell is currently in movement / distance selection
     if (
       this.map[y][x].view_distance === "Distance" &&
@@ -129,7 +129,7 @@ export default class Game {
         this.map[y][x].obj.stat.health =
           this.map[y][x].obj.stat.health - totalDamage;
 
-        playerDamage(e.target);
+        this.playerDamage(e.target, totalDamage);
 
         const index = this.players
           .map(e => e.name)
@@ -281,7 +281,7 @@ export default class Game {
     }
   }
 
-  playerDamage(node) {
+  playerDamage(node, totalDamage) {
     // Annimation of total damage
     node.innerHTML = "-" + totalDamage;
     node.style.backgroundImage = "none";
