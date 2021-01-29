@@ -78,18 +78,18 @@
             <span v-if="item.stat.health"
               >- Health : {{ item.stat.health }}</span
             >
-            <span>- Damage : {{ item.stat.damage }}</span>
-            <span>- Move : {{ item.stat.move }}</span>
+            <span v-if="item.stat.damage"
+              >- Damage : {{ item.stat.damage }}</span
+            >
+            <span v-if="item.stat.move">- Move : {{ item.stat.move }}</span>
           </div>
           <div class="view">
             <span>{{ item.icon }}</span>
           </div>
         </div>
       </div>
-      <div class="win" v-if="actionPlayer && closeDialogWin" @click="closeWin">
-        <gb-heading tag="h1"
-          >{{ actionPlayer.obj.name }} won the game !</gb-heading
-        >
+      <div class="win" v-if="closeDialogWin" @click="closeWin">
+        <gb-heading tag="h1">{{ players[0].name }} won the game !</gb-heading>
         <gb-heading tag="h1">🎉 🎉 🎉</gb-heading>
       </div>
     </div>
