@@ -1,19 +1,22 @@
-module.exports = app => {
-    const game = require("../controllers/game.controller.js");
+module.exports = (app) => {
+  const game = require("../controllers/game.controller.js");
 
-    var router = require("express").Router();
+  var router = require("express").Router();
 
-    // Create a new game
-    router.post("/", game.create);
+  // Create a new game
+  router.post("/create", game.create);
 
-    // Retrieve all games
-    router.get("/", game.findAll);
+  // Action Game
+  router.post("/action", game.action);
 
-    // Retrieve all games of a user
-    router.get("/:game", game.findByUser);
+  // Retrieve a single game with code
+  router.post("/readByCode", game.findByCode);
 
-    // Retrieve a single game with id
-    router.get("/:id", game.findOne);
+  // Retrieve all games of a user
+  router.post("/readByUser", game.findByUser);
 
-    app.use("/api/game", router);
+  // Update a game with code
+  router.post("/update", game.update);
+
+  app.use("/api/game", router);
 };

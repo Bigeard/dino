@@ -3,8 +3,14 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const app = express();
-
 const PORT = process.env.PORT || 8000;
+
+// @TODO Delete this
+app.use(function (_, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 var corsOptions = {
   origin: ["http://localhost:${PORT}"]
@@ -29,11 +35,14 @@ db.mongoose
   })
   .catch(err => {
     console.log("Cannot connect to the database!", err);
-    process.exit();
   });
 
+//routes
+require("./app/routes/user.routes")(app);
+require("./app/routes/game.routes")(app);
+
 // simple route
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
   res.json({ message: "dino-game.tech 's API" });
 });
 

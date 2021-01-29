@@ -15,7 +15,7 @@
           @click="infoGame()"
           right-icon="info"
         />
-        <gb-button class="icon" @click="reloadGame()" right-icon="refresh" />
+        <gb-button class="icon" @click="refreshGame()" right-icon="refresh" />
       </div>
     </div>
     <div id="game">
@@ -78,18 +78,18 @@
             <span v-if="item.stat.health"
               >- Health : {{ item.stat.health }}</span
             >
-            <span>- Damage : {{ item.stat.damage }}</span>
-            <span>- Move : {{ item.stat.move }}</span>
+            <span v-if="item.stat.damage"
+              >- Damage : {{ item.stat.damage }}</span
+            >
+            <span v-if="item.stat.move">- Move : {{ item.stat.move }}</span>
           </div>
           <div class="view">
             <span>{{ item.icon }}</span>
           </div>
         </div>
       </div>
-      <div class="win" v-if="actionPlayer && closeDialogWin" @click="closeWin">
-        <gb-heading tag="h1"
-          >{{ actionPlayer.obj.name }} won the game !</gb-heading
-        >
+      <div class="win" v-if="closeDialogWin" @click="closeWin">
+        <gb-heading tag="h1">{{ players[0].name }} won the game !</gb-heading>
         <gb-heading tag="h1">🎉 🎉 🎉</gb-heading>
       </div>
     </div>
@@ -127,11 +127,10 @@ export default {
   },
   methods: {
     infoGame() {
-      console.log(this.players);
       this.closeDialogInfo = this.closeDialogInfo ? false : true;
     },
-    reloadGame() {
-      window.location.reload(true);
+    refreshGame() {
+      this._data.loadGame(this);
     },
     closeInfo() {
       this.select = null;
@@ -143,7 +142,7 @@ export default {
     action(e) {
       const x = Number(e.target.attributes.x.value);
       const y = Number(e.target.attributes.y.value);
-      this._data.actionGame(x, y, e);
+      this._data.actionGame(this, x, y, e);
     }
   }
 };
