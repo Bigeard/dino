@@ -1,4 +1,5 @@
 import axios from "axios";
+import * as notifications from "../notification/index";
 
 export default class Game {
   _id = "";
@@ -96,6 +97,7 @@ export default class Game {
 
           // If turn of player
           if (this.user._id === this.players[0]._id) {
+            notifications.turnGamePushNotification();
             const accessible = this.accessibleCellsAround(
               x,
               y,
@@ -155,6 +157,8 @@ export default class Game {
             obstacle: false,
             view_distance: null
           };
+
+          notifications.winGamePushNotification();
 
           // If he is the last player, he has won!
           if (

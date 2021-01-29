@@ -85,10 +85,12 @@
 
 <script>
 import axios from "axios";
+import * as notifications from "../notification/index";
 
 export default {
   name: "Home",
   async beforeMount() {
+    notifications.activatePushNotification();
     let user = await this.$db.user.get({ id: 0 });
     if (user === undefined) {
       user = {

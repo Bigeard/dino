@@ -131,4 +131,23 @@ const getResponse = async req => {
 
 self.addEventListener("fetch", event => {
   event.respondWith(getResponse(event.request));
+  if (!navigator.onLine) {
+    event.waitUntil(
+      this.registration.showNotification("Internet", {
+        body: "You are offline"
+      })
+    );
+  }
+});
+
+//push notif
+self.addEventListener("push", function onPush(event) {
+  const data = event.data.json();
+  console.log(1, data);
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: data.icon
+    })
+  );
 });

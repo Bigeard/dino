@@ -123,6 +123,7 @@
 
 <script>
 import axios from "axios";
+import * as notifications from "../notification/index";
 export default {
   name: "Room",
   beforeMount() {
@@ -285,6 +286,7 @@ export default {
       axios
         .post("https://dino-srv.azurewebsites.net/api/game/update", update)
         .then(() => {
+          notifications.createGamePushNotification();
           this.$router.push("/game/" + this.game.code);
         })
         .catch(e => {
