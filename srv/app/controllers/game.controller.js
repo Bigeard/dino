@@ -163,11 +163,6 @@ exports.action = async (req, res) => {
       message: "Data is incomplete!",
     });
   }
-
-  console.log("Action:", x, y);
-  console.log("Code:", code);
-  console.log("passId:", passId);
-
   // Detect if user exist
   const user = await userController.findByPassId(req, res, false);
   if (!user) return;
@@ -185,9 +180,6 @@ exports.action = async (req, res) => {
   }
 
   const player = findPlayerInTheMap(game, user._id);
-  console.log("Game:", game._id);
-  console.log("Player:", player.obj._id, player.x, player.y);
-
   if (
     !checkIfAccessible(game, player.x, player.y, player.obj.stat.move, x, y)
   ) {
@@ -215,13 +207,14 @@ exports.action = async (req, res) => {
       x: x,
       y: y,
     };
-    game.players[index] = game.map[y][x].obj;
+
+    if (index > -1) game.players[index] = game.map[y][x].obj;
 
     // Check if player is dead
     if (game.map[y][x].obj.stat.health <= 0) {
       if (index > -1) {
         game.players[index].dead = true;
-        game.players[index].health = true;
+        game.players[index].health = 0;
       }
 
       game.map[y][x] = {
@@ -239,7 +232,9 @@ exports.action = async (req, res) => {
       ) {
         game.closeDialogWin = true;
         game.win = user._id;
-        game.status = "end game";
+        game.status = "end_game";
+        await this.updateByCode(code, game);
+        return res.send(game);
       }
     }
   } else {

@@ -196,7 +196,7 @@ export default class Game {
         .catch(error => {
           console.error(error);
         });
-      if (new_game.name && new_game.map && new_game.players) {
+      if (new_game && new_game.name && new_game.map && new_game.players) {
         this.name = new_game.name;
         this.map = new_game.map;
         this.players = new_game.players;

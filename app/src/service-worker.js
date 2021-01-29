@@ -88,7 +88,6 @@ const getAll = (tab, idx, val) => {
       cursorRequest.onsuccess = e => {
         const cursor = e.target.result;
         if (cursor) {
-          console.log(cursor.value);
           if (cursor.value[idx] === val) return resolve(cursor.value);
           cursor.continue();
         }
@@ -126,9 +125,9 @@ const getResponse = async req => {
   }
 };
 
-self.addEventListener("install", event => {
-  console.log("Installing");
-});
+// self.addEventListener("install", event => {
+//   console.log("Installing");
+// });
 
 self.addEventListener("fetch", event => {
   event.respondWith(getResponse(event.request));

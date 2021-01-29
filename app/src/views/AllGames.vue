@@ -11,7 +11,11 @@
       <div>
         <h2>My Games :</h2>
         <div
-          :class="'card ' + game.status"
+          :class="
+            'card ' +
+              (game.win === user._id ? 'win_game ' : 'loose_game ') +
+              game.status
+          "
           v-for="game in orderedGames"
           :key="game.id"
         >
@@ -54,21 +58,22 @@ export default {
     return {
       games: [],
       error: "",
-      online: true
+      online: true,
+      user: null
     };
   },
   computed: {
     orderedGames: function() {
-      return _.orderBy(this.games, 'updatedAt', 'desc')
+      return _.orderBy(this.games, "updatedAt", "desc");
     }
   },
   methods: {
     async findGames() {
-      let user = await this.$db.user.get({ id: 0 });
+      this.user = await this.$db.user.get({ id: 0 });
       let self = this;
       await axios
         .post("https://dino-srv.azurewebsites.net/api/game/readByUser", {
-          user: user._id
+          user: this.user._id
         })
         .then(response => {
           self.games = response.data;
@@ -96,11 +101,11 @@ export default {
         }
       }
     },
-    splitState(status){
-      return status.replace('_', ' ');
+    splitState(status) {
+      return status.replace("_", " ");
     },
-    dateToLisible(date){
-      return date.replace('T', ' ').replace(/\.\d{3}Z/,'');
+    dateToLisible(date) {
+      return date.replace("T", " ").replace(/\.\d{3}Z/, "");
     }
   }
 };
@@ -135,15 +140,16 @@ export default {
     text-align: center;
   }
 
-  .win {
+  .win_game {
     background-color: rgb(24, 133, 24);
   }
 
-  .loose {
+  .loose_game {
     background-color: #ac3333;
   }
 
-  .in_progress, .your_turn {
+  .in_progress,
+  .your_turn {
     background-color: #3f536e;
   }
 
